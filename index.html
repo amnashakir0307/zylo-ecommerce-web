@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAYLO | Luxury Streetwear & Minimalist Apparel</title>
+    
+    <!-- Google Fonts: Poppins & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#111111',
+                            pure: '#000000',
+                            white: '#FFFFFF',
+                            lightGrey: '#F5F5F5',
+                            borderGrey: '#E0E0E0',
+                            darkGrey: '#666666',
+                            cardBg: '#FAFAFA'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FFFFFF;
+            color: #111111;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5F5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #111111;
+            border-radius: 4px;
+        }
+
+        /* Preloader & Page Switch Loader */
+        #preloader, #page-transition-loader {
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        .drawer-overlay, .modal-overlay {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .drawer-content {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .size-btn.active {
+            background-color: #111111;
+            color: #FFFFFF;
+            border-color: #111111;
+        }
+
+        .category-tab.active {
+            background-color: #111111;
+            color: #FFFFFF;
+            border-color: #111111;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .payment-tab.active {
+            border-color: #111111;
+            background-color: #F5F5F5;
+            box-shadow: inset 0 0 0 1px #111111;
+        }
+
+        /* Toast notification animation */
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-toast {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-white text-brand-black antialiased">
+
+    <!-- PAGE SECTION TRANSITION LOADER OVERLAY -->
+    <div id="page-transition-loader" class="fixed inset-0 z-[90] bg-brand-black/90 backdrop-blur-sm text-white flex flex-col items-center justify-center opacity-0 pointer-events-none">
+        <div class="flex items-center gap-3">
+            <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-xs font-extrabold uppercase tracking-widest">Loading Catalog Section...</span>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[80] flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-brand-black text-white text-xs font-medium py-2.5 px-4 text-center tracking-wide z-40 relative">
+        <p class="animate-pulse-slow">
+            <i class="fa-solid fa-truck-fast mr-2"></i> 
+            Free Delivery on Orders Above Rs. 3000 | Welcome to <span class="font-extrabold tracking-wider">ZAYLO</span>
+        </p>
+    </div>
+
+    <!-- MAIN STICKY NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-borderGrey transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="lg:hidden text-brand-black p-2 focus:outline-none" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+
+            <!-- Brand Logo -->
+            <a href="#" class="text-2xl sm:text-3xl font-extrabold tracking-tighter uppercase text-brand-black flex items-center gap-1">
+                ZAYLO<span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-black"></span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden lg:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest text-brand-black">
+                <a href="#hero" class="hover:text-gray-500 transition-colors">Home</a>
+                <a href="#products-section" onclick="switchCategoryWithLoader('men', event)" class="hover:text-gray-500 transition-colors">Men</a>
+                <a href="#products-section" onclick="switchCategoryWithLoader('women', event)" class="hover:text-gray-500 transition-colors">Women</a>
+                <a href="#products-section" onclick="switchCategoryWithLoader('kids', event)" class="hover:text-gray-500 transition-colors">Kids (2-8)</a>
+                <a href="#products-section" onclick="switchCategoryWithLoader('teens', event)" class="hover:text-gray-500 transition-colors">Teens (9-15)</a>
+                <a href="#stores" class="hover:text-gray-500 transition-colors text-amber-600 font-extrabold"><i class="fa-solid fa-location-dot mr-1"></i> Stores</a>
+                <a href="#about" class="hover:text-gray-500 transition-colors">About</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-3 sm:space-x-5">
+                <button onclick="toggleSearchModal()" class="text-brand-black hover:opacity-70 transition-opacity p-2" aria-label="Search">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                </button>
+
+                <button onclick="toggleWishlistDrawer()" class="text-brand-black hover:opacity-70 transition-opacity p-2 relative" aria-label="Wishlist">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                    <span id="wishlist-counter" class="absolute -top-1 -right-1 bg-brand-black text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <button onclick="toggleCartDrawer()" class="text-brand-black hover:opacity-70 transition-opacity p-2 relative" aria-label="Cart">
+                    <i class="fa-solid fa-bag-shopping text-xl"></i>
+                    <span id="cart-counter" class="absolute -top-1 -right-1 bg-brand-black text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <button  class="hidden sm:flex text-brand-black hover:opacity-70 transition-opacity p-2" aria-label="Account"> <a href="sigup.html">
+                    <i class="fa-regular fa-user text-xl"></i></a>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden">
+        <div class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white shadow-2xl p-6 flex flex-col justify-between -translate-x-full transition-transform duration-300 ease-in-out" id="mobile-menu-drawer">
+            <div>
+                <div class="flex justify-between items-center pb-6 border-b border-brand-borderGrey">
+                    <span class="text-xl font-extrabold uppercase tracking-tight">ZAYLO</span>
+                    <button onclick="toggleMobileMenu()" class="text-brand-black text-2xl p-1"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <nav class="mt-6 flex flex-col space-y-4 font-extrabold uppercase text-xs tracking-wider">
+                    <a href="#hero" onclick="toggleMobileMenu()" class="py-2.5 border-b border-gray-100 flex items-center justify-between">
+                        <span>Home</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#products-section" onclick="switchCategoryWithLoader('men'); toggleMobileMenu();" class="py-2.5 border-b border-gray-100 flex justify-between items-center">
+                        <span>Men Collection</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#products-section" onclick="switchCategoryWithLoader('women'); toggleMobileMenu();" class="py-2.5 border-b border-gray-100 flex justify-between items-center">
+                        <span>Women Collection</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#products-section" onclick="switchCategoryWithLoader('kids'); toggleMobileMenu();" class="py-2.5 border-b border-gray-100 flex justify-between items-center">
+                        <span>Kids (Age 2-8)</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#products-section" onclick="switchCategoryWithLoader('teens'); toggleMobileMenu();" class="py-2.5 border-b border-gray-100 flex justify-between items-center">
+                        <span>Teens / Youth (Age 9-15)</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#stores" onclick="toggleMobileMenu()" class="py-2.5 border-b border-gray-100 flex items-center justify-between text-amber-600 font-extrabold">
+                        <span><i class="fa-solid fa-location-dot mr-2"></i> Our Store Outlets</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                    <a href="#about" onclick="toggleMobileMenu()" class="py-2.5 border-b border-gray-100 flex items-center justify-between">
+                        <span>About ZAYLO</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </nav>
+            </div>
+            <div class="pt-6 border-t border-brand-borderGrey">
+                <button onclick="toggleAccountModal(); toggleMobileMenu();" class="w-full bg-brand-black text-white py-3.5 font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-user"></i> Login / My Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative bg-brand-lightGrey overflow-hidden min-h-[82vh] flex items-center border-b border-brand-borderGrey">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right" data-aos-duration="900" class="z-10 text-left">
+                <span class="inline-block uppercase tracking-widest text-[11px] font-extrabold bg-brand-black text-white px-3.5 py-1.5 mb-6">URBAN LUXURY ESSENTIALS • NEW COLLECTION 2026</span>
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tight text-brand-black leading-none mb-6">
+                    DEFINING <br><span class="underline decoration-4 underline-offset-8">STREETWEAR</span>
+                </h1>
+                <p class="text-brand-darkGrey text-xs sm:text-sm mb-8 max-w-md font-medium leading-relaxed">
+                    Designed for modern fashion enthusiasts. Engineered with heavyweight combed cotton, custom minimalist silhouettes, and precision tailoring.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#products-section" onclick="switchCategoryWithLoader('men')" class="bg-brand-black text-white px-8 py-4 font-extrabold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 shadow-lg flex items-center gap-2">
+                        <span>Shop Men Collection</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#products-section" onclick="switchCategoryWithLoader('women')" class="bg-white text-brand-black border-2 border-brand-black px-8 py-4 font-extrabold text-xs uppercase tracking-widest hover:bg-brand-black hover:text-white transition-all transform hover:-translate-y-1">
+                        Shop Women
+                    </a>
+                </div>
+            </div>
+            <div data-aos="zoom-in" data-aos-duration="900" class="relative">
+                <div class="relative w-full h-[480px] sm:h-[600px] rounded-none overflow-hidden shadow-2xl border border-brand-borderGrey">
+                    <img id="hero-image" placeholder="hjg" src="https://i.pinimg.com/736x/56/1a/47/561a4745d65fda7599a54f28ad97bf77.jpg " alt="Hero Fashion" class="w-full h-full object-cover object-top transform hover:scale-105 transition-transform duration-700">
+                </div>
+                <div class="absolute -bottom-6 -left-6 bg-white p-6 shadow-2xl border border-brand-borderGrey hidden sm:block animate-float z-20">
+                    <p class="text-2xl font-black uppercase tracking-wider">Premium</p>
+                    <p class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Combed Cotton Guarantee</p>
+                </div>
+                <div class="absolute -top-6 -right-6 bg-brand-black text-white p-6 shadow-2xl hidden sm:block z-20">
+                    <p class="text-xs font-bold uppercase tracking-widest">Flagship Stores</p>
+                    <p class="text-sm font-black">Karachi • Lahore • ISB</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIES FEATURE CARDS -->
+    <section id="categories" class="py-16 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+                <h2 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-2">Curated Divisions</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold uppercase text-brand-black tracking-tight">Explore Categories</h3>
+                <div class="w-12 h-1 bg-brand-black mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-aos="fade-up">
+                <!-- Category Men -->
+                <div onclick="switchCategoryWithLoader('men'); document.getElementById('products-section').scrollIntoView({behavior: 'smooth'});" class="group relative h-[460px] overflow-hidden bg-brand-lightGrey cursor-pointer border border-brand-borderGrey">
+                    <img src="https://i.pinimg.com/736x/f7/fc/44/f7fc44e65de8fa5524eee6a8e6254543.jpg" alt="Men Collection" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] uppercase font-extrabold tracking-widest text-amber-400">Streetwear & Fits</span>
+                        <h4 class="text-2xl font-extrabold uppercase">Men Apparel</h4>
+                        <p class="text-xs text-gray-300 mt-1">Jackets, Hoodies & Tees</p>
+                    </div>
+                </div>
+                <div onclick="switchCategoryWithLoader('kids'); document.getElementById('products-section').scrollIntoView({behavior: 'smooth'});" class="group relative h-[460px] overflow-hidden bg-brand-lightGrey cursor-pointer border border-brand-borderGrey">
+                    <img src="https://i.pinimg.com/236x/bd/b6/3a/bdb63a519f0d614e2fed0afef08708c1.jpg" alt="Kids T-Shirts" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] uppercase font-extrabold tracking-widest text-amber-400">Age 2 to 8 Years</span>
+                        <h4 class="text-2xl font-extrabold uppercase">Kids T-Shirts</h4>
+                        <p class="text-xs text-gray-300 mt-1">Soft Combed Cotton Tees</p>
+                    </div>
+                </div>
+                <!-- Category Women -->
+                <div onclick="switchCategoryWithLoader('women'); document.getElementById('products-section').scrollIntoView({behavior: 'smooth'});" class="group relative h-[460px] overflow-hidden bg-brand-lightGrey cursor-pointer border border-brand-borderGrey">
+                    <img src="https://i.pinimg.com/736x/ff/19/be/ff19be9b58d049808f7f1fcb3995d5da.jpg" alt="Women Collection" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] uppercase font-extrabold tracking-widest text-amber-400">Minimalist Couture</span>
+                        <h4 class="text-2xl font-extrabold uppercase">Women Apparel</h4>
+                        <p class="text-xs text-gray-300 mt-1">Oversized Tops & Fits</p>
+                    </div>
+                </div>
+
+                <!-- Category Teens -->
+                <div onclick="switchCategoryWithLoader('teens'); document.getElementById('products-section').scrollIntoView({behavior: 'smooth'});" class="group relative h-[460px] overflow-hidden bg-brand-lightGrey cursor-pointer border border-brand-borderGrey">
+                    <img src="https://i.pinimg.com/736x/65/74/1e/65741e94ba8ca51fafcfc0abccd92bc2.jpg" alt="Teens Wear" class="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white">
+                        <span class="text-[10px] uppercase font-extrabold tracking-widest text-amber-400">Age 9 to 15 Years</span>
+                        <h4 class="text-2xl font-extrabold uppercase">Teens Apparel</h4>
+                        <p class="text-xs text-gray-300 mt-1">Urban Youth Aesthetic</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DYNAMIC PRODUCTS SECTION -->
+    <section id="products-section" class="py-16 bg-brand-lightGrey border-y border-brand-borderGrey min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                <div>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold uppercase text-brand-black tracking-tight" id="section-title">Men Collection</h3>
+                    <p class="text-xs font-medium text-brand-darkGrey mt-1">Explore our high-density combed cotton catalog. Click 'See Details' to view complete specs.</p>
+                </div>
+                <p id="product-count" class="text-xs font-bold text-brand-darkGrey uppercase tracking-wider mt-4 md:mt-0 font-mono">Showing 4 Products</p>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap gap-2 sm:gap-3 mb-10">
+                <button onclick="switchCategoryWithLoader('men', event)" id="tab-men" class="category-tab active px-5 py-3 border border-brand-borderGrey font-extrabold text-xs uppercase tracking-wider transition-all">
+                    Men Collection
+                </button>
+
+                <button onclick="switchCategoryWithLoader('women', event)" id="tab-women" class="category-tab px-5 py-3 border border-brand-borderGrey font-extrabold text-xs uppercase tracking-wider transition-all">
+                    Women Collection
+                </button>
+
+                <button onclick="switchCategoryWithLoader('kids', event)" id="tab-kids" class="category-tab px-5 py-3 border border-brand-borderGrey font-extrabold text-xs uppercase tracking-wider transition-all">
+                    Kids T-Shirts (2-8)
+                </button>
+
+                <button onclick="switchCategoryWithLoader('teens', event)" id="tab-teens" class="category-tab px-5 py-3 border border-brand-borderGrey font-extrabold text-xs uppercase tracking-wider transition-all">
+                    Teens Apparel (9-15)
+                </button>
+
+                <button onclick="switchCategoryWithLoader('all', event)" id="tab-all" class="category-tab px-5 py-3 border border-brand-borderGrey font-extrabold text-xs uppercase tracking-wider transition-all">
+                    Show All
+                </button>
+            </div>
+
+            <!-- Dynamic Product Container Grid (Renders initial 4 cards per requirements) -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Explore More / Unfold Catalog Button -->
+            <div id="explore-more-container" class="mt-12 text-center">
+                <button onclick="exploreMoreProducts()" class="bg-brand-black text-white px-10 py-4 font-extrabold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all border-2 border-brand-black shadow-lg flex items-center gap-2 mx-auto">
+                    <span>Explore More Products</span> <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHYSICAL STORE LOCATIONS / BRANCHES SECTION -->
+    <section id="stores" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+                <span class="text-xs font-extrabold uppercase tracking-widest text-amber-600 mb-2 block">
+                    <i class="fa-solid fa-store mr-1"></i> Physical Stores
+                </span>
+                <h3 class="text-3xl sm:text-4xl font-extrabold uppercase text-brand-black tracking-tight">Our Flagship Outlets</h3>
+                <p class="text-xs text-brand-darkGrey mt-2">Visit ZAYLO physical flagship stores in Karachi, Lahore, and Islamabad for custom fitting and walk-in shopping.</p>
+                <div class="w-12 h-1 bg-brand-black mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-aos="fade-up">
+                
+                <!-- Store 1: Karachi -->
+                <div class="border border-brand-borderGrey bg-brand-lightGrey p-6 flex flex-col justify-between hover:border-brand-black transition-all">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-black uppercase px-2 py-1 rounded">Open Now</span>
+                                <h4 class="text-xl font-extrabold uppercase mt-2">Dolmen Mall Clifton</h4>
+                            </div>
+                            <i class="fa-solid fa-location-dot text-2xl text-brand-black"></i>
+                        </div>
+                        <p class="text-xs text-brand-darkGrey mb-4 leading-relaxed">
+                            <i class="fa-solid fa-map-pin mr-1 text-black"></i>
+                            Dolmen City, Marine Promenade, Block 4 Clifton, Karachi
+                        </p>
+                        <div class="space-y-2 text-xs font-medium text-gray-700 border-t border-brand-borderGrey pt-4 mb-6">
+                            <p><i class="fa-regular fa-clock mr-2"></i> Mon - Sun: 11:00 AM - 11:00 PM</p>
+                            <p><i class="fa-solid fa-phone mr-2"></i> +92 21 111 362 111</p>
+                            <p><i class="fa-solid fa-shirt mr-2"></i> Full Men, Women & Kids Racks</p>
+                        </div>
+                    </div>
+                    <a href="https://maps.google.com/?cid=10324096856687063799" target="_blank" rel="noopener noreferrer" class="w-full bg-brand-black text-white text-center py-3 text-xs font-bold uppercase tracking-wider block hover:bg-gray-800 transition-colors">
+                        Get Directions <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Store 2: Karachi LuckyOne -->
+                <div class="border border-brand-borderGrey bg-brand-lightGrey p-6 flex flex-col justify-between hover:border-brand-black transition-all">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-black uppercase px-2 py-1 rounded">Open Now</span>
+                                <h4 class="text-xl font-extrabold uppercase mt-2">LuckyOne Mall</h4>
+                            </div>
+                            <i class="fa-solid fa-location-dot text-2xl text-brand-black"></i>
+                        </div>
+                        <p class="text-xs text-brand-darkGrey mb-4 leading-relaxed">
+                            <i class="fa-solid fa-map-pin mr-1 text-black"></i>
+                            Main Rashid Minhas Rd, Block 21, Gulberg Town, Karachi
+                        </p>
+                        <div class="space-y-2 text-xs font-medium text-gray-700 border-t border-brand-borderGrey pt-4 mb-6">
+                            <p><i class="fa-regular fa-clock mr-2"></i> Mon - Sun: 11:00 AM - 11:00 PM</p>
+                            <p><i class="fa-solid fa-phone mr-2"></i> +92 21 36321311</p>
+                            <p><i class="fa-solid fa-shirt mr-2"></i> Streetwear & Youth Lounge</p>
+                        </div>
+                    </div>
+                    <a href="https://maps.google.com/?cid=3850751354242859946" target="_blank" rel="noopener noreferrer" class="w-full bg-brand-black text-white text-center py-3 text-xs font-bold uppercase tracking-wider block hover:bg-gray-800 transition-colors">
+                        Get Directions <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                    </a>
+                </div>
+
+                <!-- Store 3: Lahore Packages Mall -->
+                <div class="border border-brand-borderGrey bg-brand-lightGrey p-6 flex flex-col justify-between hover:border-brand-black transition-all">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-black uppercase px-2 py-1 rounded">Open Now</span>
+                                <h4 class="text-xl font-extrabold uppercase mt-2">Packages Mall Lahore</h4>
+                            </div>
+                            <i class="fa-solid fa-location-dot text-2xl text-brand-black"></i>
+                        </div>
+                        <p class="text-xs text-brand-darkGrey mb-4 leading-relaxed">
+                            <i class="fa-solid fa-map-pin mr-1 text-black"></i>
+                            Main Walton Rd, Shahrah-E-Roomi, Lahore
+                        </p>
+                        <div class="space-y-2 text-xs font-medium text-gray-700 border-t border-brand-borderGrey pt-4 mb-6">
+                            <p><i class="fa-regular fa-clock mr-2"></i> Mon - Sun: 11:00 AM - 11:00 PM</p>
+                            <p><i class="fa-solid fa-phone mr-2"></i> +92 42 111 696 255</p>
+                            <p><i class="fa-solid fa-shirt mr-2"></i> Premium Tailoring & Fitting</p>
+                        </div>
+                    </div>
+                    <a href="https://maps.google.com/?cid=3655343592167111466" target="_blank" rel="noopener noreferrer" class="w-full bg-brand-black text-white text-center py-3 text-xs font-bold uppercase tracking-wider block hover:bg-gray-800 transition-colors">
+                        Get Directions <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- GUARANTEE FEATURES BAR -->
+    <section class="py-16 bg-brand-lightGrey border-y border-brand-borderGrey">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                
+                <div class="p-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 bg-brand-black text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h4 class="font-extrabold uppercase text-xs mb-1">Secure Payment</h4>
+                    <p class="text-[11px] text-brand-darkGrey">COD, JazzCash/Easypaisa & Card Gateways</p>
+                </div>
+
+                <div class="p-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-12 h-12 bg-brand-black text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </div>
+                    <h4 class="font-extrabold uppercase text-xs mb-1">Easy 7-Day Returns</h4>
+                    <p class="text-[11px] text-brand-darkGrey">Hassle-free reverse pick up support</p>
+                </div>
+
+                <div class="p-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-12 h-12 bg-brand-black text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <h4 class="font-extrabold uppercase text-xs mb-1">Combed Cotton Guarantee</h4>
+                    <p class="text-[11px] text-brand-darkGrey">100% High-grade double stitched fabric</p>
+                </div>
+
+                <div class="p-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="w-12 h-12 bg-brand-black text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h4 class="font-extrabold uppercase text-xs mb-1">Express Dispatch</h4>
+                    <p class="text-[11px] text-brand-darkGrey">Shipped within 24 hours nationwide</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="py-20 bg-brand-black text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right">
+                    <span class="text-xs uppercase font-extrabold tracking-widest text-amber-400">Our Legacy & Mission</span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight mt-2 mb-6">The Essence of ZAYLO</h2>
+                    <p class="text-gray-300 text-xs sm:text-sm leading-relaxed mb-4">
+                        Founded with a vision to redefine urban streetwear and luxury minimalist fashion in Pakistan, ZAYLO delivers high-density combed cotton apparel, tailored silhouettes, and durable everyday basics.
+                    </p>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed mb-8">
+                        Whether you are shopping for Men's jackets, Women's oversized tees, Kids' soft cotton shirts, or Youth trend items, every item is designed with precision in our local Karachi studios.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 border-t border-gray-800 pt-6">
+                        <div>
+                            <span class="block text-3xl font-extrabold text-white">200+</span>
+                            <span class="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Designs In Catalog</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-extrabold text-white">3 Malls</span>
+                            <span class="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Physical Outlets</span>
+                        </div>
+                    </div>
+                </div>
+                <div data-aos="fade-left">
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=80" alt="Zaylo Studio" class="w-full h-96 sm:h-[420px] object-cover border border-gray-800 shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT DETAIL MODAL ("See Details" Page/View) -->
+    <div id="product-detail-modal" class="modal-overlay fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative border border-brand-black shadow-2xl">
+            <button onclick="closeProductDetailModal()" class="absolute top-6 right-6 text-brand-black text-2xl hover:opacity-70 z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="detail-modal-body" class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div id="cart-drawer" class="drawer-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none">
+        <div id="cart-drawer-content" class="drawer-content fixed top-0 right-0 w-full max-w-md h-full bg-white shadow-2xl flex flex-col translate-x-full">
+            <div class="p-6 border-b border-brand-borderGrey flex justify-between items-center bg-brand-black text-white">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <h3 class="font-extrabold uppercase text-sm tracking-wider">Shopping Bag</h3>
+                </div>
+                <button onclick="toggleCartDrawer()" class="text-white hover:text-gray-300 text-2xl p-1 focus:outline-none">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Free Shipping Progress Bar -->
+            <div class="bg-brand-lightGrey p-4 border-b border-brand-borderGrey">
+                <div class="flex justify-between text-[11px] font-bold mb-1.5" id="shipping-progress-text">
+                    <span>Free Shipping Bar</span>
+                    <span>Rs. 3,000 Goal</span>
+                </div>
+                <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="shipping-progress-bar" class="h-full bg-brand-black transition-all duration-500 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Cart Items Scrollable Area -->
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Subtotal & Checkout -->
+            <div class="p-6 border-t border-brand-borderGrey bg-brand-lightGrey">
+                <div class="space-y-2 mb-4 text-xs font-semibold">
+                    <div class="flex justify-between text-brand-darkGrey">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">Rs. 0</span>
+                    </div>
+                    <div class="flex justify-between text-brand-darkGrey">
+                        <span>Delivery Charge</span>
+                        <span id="cart-shipping-fee">Rs. 250</span>
+                    </div>
+                    <div class="flex justify-between text-base font-extrabold text-brand-black border-t border-brand-borderGrey pt-2">
+                        <span>Total Payable</span>
+                        <span id="cart-total">Rs. 0</span>
+                    </div>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-brand-black text-white py-4 font-extrabold uppercase tracking-widest text-xs hover:bg-gray-800 transition-colors shadow-lg">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WISHLIST DRAWER -->
+    <div id="wishlist-drawer" class="drawer-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none">
+        <div id="wishlist-drawer-content" class="drawer-content fixed top-0 right-0 w-full max-w-md h-full bg-white shadow-2xl flex flex-col translate-x-full">
+            <div class="p-6 border-b border-brand-borderGrey flex justify-between items-center bg-brand-black text-white">
+                <div class="flex items-center gap-2">
+                    <i class="fa-regular fa-heart text-lg"></i>
+                    <h3 class="font-extrabold uppercase text-sm tracking-wider">Your Wishlist</h3>
+                </div>
+                <button onclick="toggleWishlistDrawer()" class="text-white hover:text-gray-300 text-2xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="wishlist-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="modal-overlay fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative border border-brand-black">
+            
+            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6 text-brand-black text-2xl hover:opacity-70">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-2xl font-extrabold uppercase text-brand-black tracking-tight mb-1">ZAYLO Checkout</h3>
+            <p class="text-xs text-brand-darkGrey mb-6">Enter your address details to complete your cash or online order.</p>
+
+            <form id="checkout-form" onsubmit="handleCheckout(event)" class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase mb-1">Full Name *</label>
+                        <input type="text" required placeholder="Ali Khan" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase mb-1">Phone Number *</label>
+                        <input type="tel" required placeholder="0300 1234567" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold uppercase mb-1">Shipping Address *</label>
+                        <input type="text" required placeholder="House/Apartment #, Street, Block" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase mb-1">City *</label>
+                        <input type="text" required placeholder="Karachi / Lahore / Islamabad" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase mb-1">Postal Code</label>
+                        <input type="text" placeholder="75500" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase mb-2">Payment Method</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div onclick="selectPaymentMethod(this, 'cod')" class="payment-tab active border border-brand-borderGrey p-3 text-center cursor-pointer">
+                            <i class="fa-solid fa-money-bill-wave text-lg mb-1 block"></i>
+                            <span class="text-[10px] font-extrabold uppercase">Cash on Delivery</span>
+                        </div>
+                        <div onclick="selectPaymentMethod(this, 'easypaisa')" class="payment-tab border border-brand-borderGrey p-3 text-center cursor-pointer">
+                            <i class="fa-solid fa-mobile-screen-button text-lg mb-1 block"></i>
+                            <span class="text-[10px] font-extrabold uppercase">Easypaisa / JazzCash</span>
+                        </div>
+                        <div onclick="selectPaymentMethod(this, 'bank')" class="payment-tab border border-brand-borderGrey p-3 text-center cursor-pointer">
+                            <i class="fa-solid fa-building-columns text-lg mb-1 block"></i>
+                            <span class="text-[10px] font-extrabold uppercase">Bank Transfer</span>
+                        </div>
+                        <div onclick="selectPaymentMethod(this, 'card')" class="payment-tab border border-brand-borderGrey p-3 text-center cursor-pointer">
+                            <i class="fa-solid fa-credit-card text-lg mb-1 block"></i>
+                            <span class="text-[10px] font-extrabold uppercase">Credit Card</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="card-details-fields" class="hidden space-y-3 p-4 bg-brand-lightGrey border border-brand-borderGrey">
+                    <p class="text-xs font-bold uppercase text-brand-black">Credit / Debit Card Payment</p>
+                    <input type="text" placeholder="Cardholder Name" class="w-full p-2.5 border border-brand-borderGrey text-xs font-medium">
+                    <input type="text" placeholder="Card Number (16 digits)" class="w-full p-2.5 border border-brand-borderGrey text-xs font-medium">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" placeholder="MM/YY" class="w-full p-2.5 border border-brand-borderGrey text-xs font-medium">
+                        <input type="password" placeholder="CVC" class="w-full p-2.5 border border-brand-borderGrey text-xs font-medium">
+                    </div>
+                </div>
+
+                <div class="border-t border-brand-borderGrey pt-4 space-y-1 text-xs">
+                    <div class="flex justify-between text-brand-darkGrey">
+                        <span>Cart Subtotal:</span>
+                        <span id="checkout-subtotal">Rs. 0</span>
+                    </div>
+                    <div class="flex justify-between font-extrabold text-sm text-brand-black pt-2 border-t border-brand-borderGrey">
+                        <span>Total Amount:</span>
+                        <span id="checkout-total">Rs. 0</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-black text-white py-4 font-extrabold uppercase tracking-widest text-xs hover:bg-gray-800 transition-colors">
+                    Confirm & Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- POLICY & LOGIN & SEARCH MODALS -->
+    <div id="policy-modal" class="modal-overlay fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 sm:p-8 relative border border-brand-black">
+            <button onclick="closePolicyModal()" class="absolute top-6 right-6 text-brand-black text-2xl hover:opacity-70">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="policy-title" class="text-2xl font-extrabold uppercase text-brand-black tracking-tight mb-4">Policy Title</h3>
+            <div id="policy-content" class="text-xs text-brand-darkGrey space-y-3 leading-relaxed"></div>
+        </div>
+    </div>
+
+    <div id="account-modal" class="modal-overlay fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white w-full max-w-md p-6 sm:p-8 relative border border-brand-black">
+            <button onclick="toggleAccountModal()" class="absolute top-6 right-6 text-brand-black text-2xl hover:opacity-70">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-extrabold uppercase text-brand-black tracking-tight mb-2">Customer Account</h3>
+            <p class="text-xs text-brand-darkGrey mb-6">Login to track orders across Pakistan outlets.</p>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Email Address</label>
+                    <input type="email" required placeholder="user@zaylo.com" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-brand-black text-white py-3.5 font-bold uppercase tracking-wider text-xs hover:bg-gray-800 transition-colors">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="search-modal" class="modal-overlay fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start justify-center pt-24 p-4 opacity-0 pointer-events-none">
+        <div class="bg-white w-full max-w-xl p-6 relative border border-brand-black shadow-2xl">
+            <button onclick="toggleSearchModal()" class="absolute top-4 right-4 text-brand-black text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h4 class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2">Search Catalog</h4>
+            <div class="flex items-center border-b-2 border-brand-black pb-2">
+                <input id="search-input" onkeyup="liveSearch()" type="text" placeholder="Type jacket, hoodie, kids tee..." class="w-full text-base font-semibold focus:outline-none">
+                <i class="fa-solid fa-magnifying-glass text-brand-black"></i>
+            </div>
+            <div id="search-results" class="mt-4 max-h-60 overflow-y-auto divide-y divide-gray-100 text-xs"></div>
+        </div>
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-16 bg-white border-t border-brand-borderGrey">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-xl mx-auto text-center mb-10">
+                <h3 class="text-2xl sm:text-3xl font-extrabold uppercase text-brand-black tracking-tight">Customer Support</h3>
+                <p class="text-xs text-brand-darkGrey mt-2">Questions regarding online orders, sizing, or store pickups? Contact us.</p>
+            </div>
+            <form onsubmit="handleContactSubmit(event)" class="max-w-xl mx-auto space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="text" required placeholder="Your Name" class="p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                    <input type="email" required placeholder="Your Email" class="p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                </div>
+                <input type="text" required placeholder="Subject" class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none">
+                <textarea rows="4" required placeholder="Your Message..." class="w-full p-3 border border-brand-borderGrey text-xs font-medium focus:border-brand-black focus:outline-none"></textarea>
+                <button type="submit" class="w-full bg-brand-black text-white py-3.5 font-bold uppercase tracking-wider text-xs hover:bg-gray-800 transition-colors">
+                    Send Inquiry
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <!-- <footer class="bg-brand-black text-white pt-16 pb-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div>
+                <h4 class="text-2xl font-extrabold uppercase tracking-tight mb-4">ZAYLO</h4>
+                <p class="text-xs text-gray-400 leading-relaxed mb-6">
+                    Pakistan's premier streetwear brand engineered with combed cotton and tailored minimalist aesthetics. Flagships in Karachi, Lahore, and Islamabad.
+                </p>
+                <div class="flex space-x-3 text-sm">
+                    <a href="#" class="w-8 h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-white hover:text-black transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-white hover:text-black transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-white hover:text-black transition-colors"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Collections</h5>
+                <ul class="space-y-2.5 text-xs font-medium text-gray-300">
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('men')" class="hover:text-white transition-colors">Men Collection</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('women')" class="hover:text-white transition-colors">Women Collection</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('kids')" class="hover:text-white transition-colors">Kids T-Shirts (2-8 Yrs)</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('teens')" class="hover:text-white transition-colors">Teens Wear (9-15 Yrs)</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Policies & Outlets</h5>
+                <ul class="space-y-2.5 text-xs font-medium text-gray-300">
+                    <li><a href="#stores" class="hover:text-white transition-colors text-amber-400 font-bold"><i class="fa-solid fa-store mr-1"></i> Store Outlets</a></li>
+                    <li><button onclick="openPolicyModal('privacy')" class="hover:text-white transition-colors text-left">Privacy Policy</button></li>
+                    <li><button onclick="openPolicyModal('shipping')" class="hover:text-white transition-colors text-left">Shipping Policy</button></li>
+                    <li><button onclick="openPolicyModal('returns')" class="hover:text-white transition-colors text-left">Return & Exchange Policy</button></li>
+                    <li><button onclick="openPolicyModal('terms')" class="hover:text-white transition-colors text-left">Terms & Conditions</button></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Newsletter</h5>
+                <p class="text-xs text-gray-400 mb-4">Subscribe for early drop alerts and outlet sales.</p>
+                <form onsubmit="handleNewsletter(event)" class="space-y-2">
+                    <input type="email" required placeholder="Enter your email" class="w-full p-3 bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-white">
+                    <button type="submit" class="w-full bg-white text-black font-extrabold uppercase text-xs tracking-wider py-3 hover:bg-gray-200 transition-colors">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-gray-900 text-center text-xs text-gray-500">
+            <p>&copy; 2026 ZAYLO Apparel. All Rights Reserved.</p>
+        </div>
+    </footer> -->
+<footer class="bg-brand-black text-white pt-16 pb-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div>
+                <h4 class="text-2xl font-extrabold uppercase tracking-tight mb-4">ZAYLO</h4>
+                <p class="text-xs text-gray-400 leading-relaxed mb-6">Pakistan's premier streetwear brand engineered with combed cotton. Flagships in Karachi, Lahore, and Islamabad.</p>
+            </div>
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Collections</h5>
+                <ul class="space-y-2.5 text-xs font-medium text-gray-300">
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('men')">Men Collection</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('women')">Women Collection</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('kids')">Kids T-Shirts (2-8 Yrs)</a></li>
+                    <li><a href="#products-section" onclick="switchCategoryWithLoader('teens')">Teens Wear (9-15 Yrs)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Policies & Admin</h5>
+                <ul class="space-y-2.5 text-xs font-medium text-gray-300">
+                    <li><button ><a href="admin.html">Admin Portal Hub</a></button></li>
+                    <li><button onclick="openPolicyModal('privacy')">Privacy Policy</button></li>
+                    <li><button onclick="openPolicyModal('shipping')">Shipping Policy</button></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-xs font-extrabold uppercase tracking-widest text-gray-400 mb-4">Newsletter</h5>
+                <form onsubmit="handleNewsletter(event)" class="space-y-2">
+                    <input type="email" required placeholder="Enter your email" class="w-full p-3 bg-gray-900 border border-gray-800 text-xs text-white">
+                    <button type="submit" class="w-full bg-white text-black font-extrabold uppercase text-xs tracking-wider py-3">Subscribe</button>
+                </form>
+            </div>
+        </div>
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-gray-900 text-center text-xs text-gray-500">
+            <p>&copy; 2026 ZAYLO Apparel. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <!-- AOS JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script>
+        if (!sessionStorage.getItem('visited_loading')) {
+        sessionStorage.setItem('visited_loading', 'true');
+        window.location.href = 'loading.html';
+
+        // Remove Preloader once page loads completely
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => preloader.style.visibility = 'hidden', 500);
+            }
+            AOS.init({ once: true, duration: 600, offset: 80 });
+            filterProducts('men');
+            updateCartUI();
+            updateWishlistUI();
+        });
+
+        // Curated Images per Category
+        const menImages = [
+            "https://i.pinimg.com/736x/44/a0/13/44a01391833a4d79e885ca8b61bfc31b.jpg",
+            "https://i.pinimg.com/736x/65/09/6d/65096d5c4cae6d7b54afa2934311229b.jpg",
+            "https://i.pinimg.com/736x/40/6b/77/406b774043df503814a7f4f375974220.jpg",
+            "https://i.pinimg.com/736x/ec/4b/c5/ec4bc59e047d5e1af06c0b22d003fb4d.jpg",
+            "https://i.pinimg.com/736x/ee/96/00/ee9600b616ac3eb0cb633e9ad8744b1f.jpg",
+            "https://i.pinimg.com/736x/b8/e7/b3/b8e7b382498fff5b492ce4ead57b5051.jpg"
+        ];
+
+        const womenImages = [
+            "https://i.pinimg.com/736x/c4/eb/df/c4ebdf44385178056e609c9f50560232.jpg",
+            "https://i.pinimg.com/736x/93/81/33/93813383e56abd481044207fdd4a4455.jpg",
+            "https://i.pinimg.com/736x/e5/da/05/e5da05ea97bb10879eb56381967e8132.jpg",
+            "https://i.pinimg.com/736x/f6/44/bc/f644bc0b2099ae49202bcccb35437448.jpg",
+            "https://i.pinimg.com/736x/09/90/90/099090598cac435873470f945413636d.jpg"
+        ];
+
+        const kidsImages = [
+            "https://i.pinimg.com/736x/12/21/df/1221dfa1cfb7f97670d8122ed920f59f.jpg",
+            "https://i.pinimg.com/736x/2b/34/f3/2b34f366f70ccab9174f6d156358beac.jpg",
+             "https://i.pinimg.com/736x/ab/bc/51/abbc51af62f09d93cdb338cbcb17b51e.jpg",
+              "https://i.pinimg.com/736x/f2/59/95/f25995db75cbd615d18398d7b0f7a575.jpg",
+               "https://i.pinimg.com/736x/a6/43/82/a6438292a7576ff18200d9753c1d4c1d.jpg",
+                "https://i.pinimg.com/736x/a3/5e/6d/a35e6de7b9277fefce1a877494d319b4.jpg",
+                  "https://i.pinimg.com/736x/87/3d/bf/873dbf90c5a485e10c1b30b97659ffc5.jpg",
+            "https://i.pinimg.com/736x/c1/38/08/c13808b893d3757edbb4ecfc6dc8bf3f.jpg"
+        ];
+
+        const teensImages = [
+            "https://i.pinimg.com/736x/57/15/5f/57155feb1b2a3ab6744d2d7288355e58.jpg",
+            "https://i.pinimg.com/736x/5a/bb/33/5abb33fa45815f4c56d269f8ba2217cd.jpg",
+            "https://i.pinimg.com/736x/c4/db/5c/c4db5c90ba0d0fc14b8c0dd6365287be.jpg",
+            "https://i.pinimg.com/736x/63/65/51/636551276f6b3b546cd7d5b6ffc40e62.jpg",
+            "https://i.pinimg.com/736x/c1/22/a8/c122a887042f853e4fe72341008ecb6b.jpg"
+        ];
+
+        let productsData = [];
+        let idCounter = 1;
+
+        // POPULATE FULL DATASET (50+ cards per category backend)
+        const menTypes = ["Heavyweight Boxy Fit Tee", "Oversized Street Hoodie", "Tailored Minimalist Blazer", "Urban Tactical Jogger", "Denim Trucker Jacket", "Combed Pima Polo"];
+        for (let i = 0; i < 50; i++) {
+            productsData.push({
+                id: idCounter++,
+                name: `Men ${menTypes[i % menTypes.length]} #${i + 1}`,
+                category: 'men',
+                price: 1899 + (i % 8) * 250,
+                oldPrice: 2499 + (i % 8) * 300,
+                badge: i % 3 === 0 ? "Hot Drop" : "Streetwear",
+                description: "Crafted from 280 GSM premium combed ring-spun cotton. Pre-shrunk fabric with reinforced double-needle stitching for ultimate longevity and relaxed street silhouette.",
+                image: menImages[i % menImages.length]
+            });
+        }
+
+        const womenTypes = ["Minimalist Cropped Hoodie", "Wide Leg High-Waist Trousers", "Ribbed Knit Fit Top", "Oversized Cotton Tee", "Tailored Blazer Dress"];
+        for (let i = 0; i < 52; i++) {
+            productsData.push({
+                id: idCounter++,
+                name: `Women ${womenTypes[i % womenTypes.length]} #${i + 1}`,
+                category: 'women',
+                price: 2100 + (i % 8) * 200,
+                oldPrice: 2800 + (i % 8) * 250,
+                badge: "Trending",
+                description: "Ultra-soft touch combed knit fabric featuring contemporary dropped shoulders and an effortless feminine drape. Tailored for all-day comfort.",
+                image: womenImages[i % womenImages.length]
+            });
+        }
+
+        const kidsTypes = ["Junior Graphic Cotton Tee", "Soft Crewneck Tee", "Mini Streetwear Printed Tee", "Organic Cotton Casual Shirt"];
+        for (let i = 0; i < 50; i++) {
+            productsData.push({
+                id: idCounter++,
+                name: `Kids ${kidsTypes[i % kidsTypes.length]} (2-8 Yrs) #${i + 1}`,
+                category: 'kids',
+                price: 1199 + (i % 6) * 120,
+                oldPrice: 1600 + (i % 6) * 150,
+                badge: "Kids 2-8",
+                description: "100% Hypoallergenic combed organic cotton shirt. Gentle on sensitive skin with non-toxic bio-wash finish for active toddlers and kids.",
+                image: kidsImages[i % kidsImages.length]
+            });
+        }
+
+        const teensTypes = ["Youth Oversized Streetwear Hoodie", "Teens Urban Cargo Pant", "Graphic Skateboarding Tee", "Youth Denim Jacket"];
+        for (let i = 0; i < 50; i++) {
+            productsData.push({
+                id: idCounter++,
+                name: `Teens ${teensTypes[i % teensTypes.length]} (9-15 Yrs) #${i + 1}`,
+                category: 'teens',
+                price: 2299 + (i % 7) * 180,
+                oldPrice: 2999 + (i % 7) * 220,
+                badge: "Teens 9-15",
+                description: "Contemporary urban cut tailored for teens. Durable double-ply fabric designed to withstand daily wear while maintaining structure and color vibrancy.",
+                image: teensImages[i % teensImages.length]
+            });
+        }
+
+        // Cart and Wishlist LocalStorage States
+        let cart = JSON.parse(localStorage.getItem('zaylo_cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('zaylo_wishlist')) || [];
+        let currentCategory = 'men';
+        let currentFilteredProducts = [];
+        let isExpanded = false; // Initial state: 4 cards visible
+
+        function saveCart() {
+            localStorage.setItem('zaylo_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function saveWishlist() {
+            localStorage.setItem('zaylo_wishlist', JSON.stringify(wishlist));
+            updateWishlistUI();
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-brand-black text-white px-5 py-3 text-xs font-bold uppercase tracking-wider shadow-2xl border-l-4 border-amber-400 animate-toast flex items-center gap-2';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-amber-400"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Page transition loader when switching categories
+        function switchCategoryWithLoader(category, eventObj = null) {
+            const transitionLoader = document.getElementById('page-transition-loader');
+            transitionLoader.classList.remove('opacity-0', 'pointer-events-none');
+
+            setTimeout(() => {
+                filterProducts(category, eventObj);
+                transitionLoader.classList.add('opacity-0', 'pointer-events-none');
+            }, 350);
+        }
+
+        function filterProducts(category, eventObj = null) {
+            currentCategory = category;
+            isExpanded = false; // Reset to initial 4 cards view on category switch
+
+            // Highlight Tab Buttons
+            const tabs = document.querySelectorAll('.category-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            if (eventObj && eventObj.target) {
+                const targetBtn = eventObj.target.closest('.category-tab');
+                if (targetBtn) targetBtn.classList.add('active');
+            } else {
+                const activeTab = document.getElementById(`tab-${category}`);
+                if (activeTab) activeTab.classList.add('active');
+            }
+
+            // Update Title
+            const sectionTitle = document.getElementById('section-title');
+            if (category === 'men') sectionTitle.innerText = "Men Collection";
+            else if (category === 'women') sectionTitle.innerText = "Women Collection";
+            else if (category === 'kids') sectionTitle.innerText = "Kids T-Shirts (Age 2-8)";
+            else if (category === 'teens') sectionTitle.innerText = "Teens Wear (Age 9-15)";
+            else sectionTitle.innerText = "Full ZAYLO Catalog";
+
+            // Filter
+            if (category === 'all') {
+                currentFilteredProducts = productsData;
+            } else {
+                currentFilteredProducts = productsData.filter(p => p.category === category);
+            }
+
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const countText = document.getElementById('product-count');
+            const exploreBtnContainer = document.getElementById('explore-more-container');
+
+            grid.innerHTML = '';
+            
+            // Show only 4 cards initially, or all if expanded
+            const limit = isExpanded ? currentFilteredProducts.length : 4;
+            const sliceToRender = currentFilteredProducts.slice(0, limit);
+
+            countText.innerText = `Showing ${sliceToRender.length} of ${currentFilteredProducts.length} Items`;
+
+            sliceToRender.forEach((product) => {
+                const isWishlisted = wishlist.includes(product.id);
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-brand-borderGrey group flex flex-col justify-between hover:border-brand-black transition-all duration-300 shadow-sm hover:shadow-md relative';
+
+                card.innerHTML = `
+                    <div class="relative overflow-hidden aspect-[3/4] bg-gray-100">
+                        <span class="absolute top-3 left-3 z-10 bg-brand-black text-white text-[9px] font-extrabold uppercase px-2 py-1">${product.badge}</span>
+                        <button onclick="toggleWishlist(${product.id})" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-brand-black flex items-center justify-center transition-colors">
+                            <i class="${isWishlisted ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-sm"></i>
+                        </button>
+                        <img src="${product.image}" alt="${product.name}" loading="lazy" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 cursor-pointer" onclick="openProductDetailModal(${product.id})">
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-xs uppercase text-brand-black tracking-wide mb-1.5 line-clamp-1 cursor-pointer hover:underline" onclick="openProductDetailModal(${product.id})">${product.name}</h4>
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="font-extrabold text-sm text-brand-black">Rs. ${product.price.toLocaleString()}</span>
+                                <span class="text-xs text-gray-400 line-through">Rs. ${product.oldPrice.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <!-- Prominent "See Details" CTA -->
+                            <button onclick="openProductDetailModal(${product.id})" class="w-full bg-white text-brand-black border border-brand-black py-2.5 font-extrabold uppercase text-[10px] tracking-wider hover:bg-brand-black hover:text-white transition-all flex items-center justify-center gap-2">
+                                <i class="fa-regular fa-eye"></i> See Details
+                            </button>
+
+                            <button onclick="quickAddToCart(${product.id})" class="w-full bg-brand-black text-white py-2.5 font-extrabold uppercase text-[10px] tracking-wider hover:bg-gray-800 transition-all flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fa-solid fa-cart-plus"></i> Quick Add
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Show Explore More button if there are more than 4 items and not expanded yet
+            if (!isExpanded && currentFilteredProducts.length > 4) {
+                exploreBtnContainer.classList.remove('hidden');
+            } else {
+                exploreBtnContainer.classList.add('hidden');
+            }
+        }
+
+        // OPEN PRODUCT DETAIL MODAL
+        let selectedDetailSize = 'M';
+        function openProductDetailModal(productId) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            selectedDetailSize = 'M';
+            const modalBody = document.getElementById('detail-modal-body');
+
+            modalBody.innerHTML = `
+                <div class="aspect-[3/4] bg-gray-100 overflow-hidden border border-brand-borderGrey">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover object-top">
+                </div>
+                <div class="flex flex-col justify-between space-y-4">
+                    <div>
+                        <span class="bg-brand-black text-white text-[9px] font-extrabold uppercase px-2.5 py-1 inline-block mb-3">${product.badge}</span>
+                        <h3 class="text-2xl font-extrabold uppercase text-brand-black tracking-tight leading-tight mb-2">${product.name}</h3>
+                        
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-2xl font-black text-brand-black">Rs. ${product.price.toLocaleString()}</span>
+                            <span class="text-sm text-gray-400 line-through">Rs. ${product.oldPrice.toLocaleString()}</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 uppercase">In Stock</span>
+                        </div>
+
+                        <p class="text-xs text-brand-darkGrey leading-relaxed border-t border-brand-borderGrey pt-4 mb-4">
+                            ${product.description}
+                        </p>
+
+                        <!-- Specifications -->
+                        <div class="space-y-1.5 text-xs font-semibold text-gray-700 bg-brand-lightGrey p-3 mb-4 border border-brand-borderGrey">
+                            <p><i class="fa-solid fa-check mr-2 text-black"></i> 100% Premium Heavyweight Combed Cotton</p>
+                            <p><i class="fa-solid fa-check mr-2 text-black"></i> Pre-shrunk & Color-Fast Guarantee</p>
+                            <p><i class="fa-solid fa-check mr-2 text-black"></i> Express Dispatch from Karachi HQ</p>
+                        </div>
+
+                        <!-- Size Selector -->
+                        <div class="mb-6">
+                            <label class="block text-xs font-extrabold uppercase text-brand-black mb-2">Select Your Size:</label>
+                            <div class="flex gap-2">
+                                <button onclick="selectDetailSize(this, 'S')" class="size-btn w-10 h-10 border border-brand-borderGrey text-xs font-extrabold flex items-center justify-center hover:border-brand-black">S</button>
+                                <button onclick="selectDetailSize(this, 'M')" class="size-btn active w-10 h-10 border border-brand-borderGrey text-xs font-extrabold flex items-center justify-center hover:border-brand-black">M</button>
+                                <button onclick="selectDetailSize(this, 'L')" class="size-btn w-10 h-10 border border-brand-borderGrey text-xs font-extrabold flex items-center justify-center hover:border-brand-black">L</button>
+                                <button onclick="selectDetailSize(this, 'XL')" class="size-btn w-10 h-10 border border-brand-borderGrey text-xs font-extrabold flex items-center justify-center hover:border-brand-black">XL</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-4 border-t border-brand-borderGrey">
+                        <button onclick="addFromDetailModal(${product.id})" class="w-full bg-brand-black text-white py-4 font-extrabold uppercase tracking-widest text-xs hover:bg-gray-800 transition-colors shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bag-shopping"></i> Add To Shopping Bag
+                        </button>
+                        <button onclick="toggleWishlist(${product.id})" class="w-full border border-brand-black text-brand-black py-3 font-bold uppercase tracking-wider text-xs hover:bg-gray-50 transition-colors">
+                            <i class="fa-regular fa-heart mr-1"></i> Save To Wishlist
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            const modal = document.getElementById('product-detail-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function selectDetailSize(btn, size) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedDetailSize = size;
+        }
+
+        function closeProductDetailModal() {
+            const modal = document.getElementById('product-detail-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function addFromDetailModal(productId) {
+            const product = productsData.find(p => p.id === productId);
+            const existingIndex = cart.findIndex(item => item.id === productId && item.size === selectedDetailSize);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    size: selectedDetailSize,
+                    quantity: 1
+                });
+            }
+
+            saveCart();
+            closeProductDetailModal();
+            showToast(`Added ${product.name} (Size ${selectedDetailSize}) to cart`);
+            toggleCartDrawer(true);
+        }
+
+        function quickAddToCart(productId) {
+            const product = productsData.find(p => p.id === productId);
+            const existingIndex = cart.findIndex(item => item.id === productId && item.size === 'M');
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    size: 'M',
+                    quantity: 1
+                });
+            }
+
+            saveCart();
+            showToast(`Quick Added ${product.name} to cart`);
+        }
+
+        function toggleWishlist(productId) {
+            const index = wishlist.indexOf(productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast('Removed item from Wishlist');
+            } else {
+                wishlist.push(productId);
+                showToast('Added item to Wishlist');
+            }
+            saveWishlist();
+            renderProducts();
+        }
+
+        function updateWishlistUI() {
+            const counter = document.getElementById('wishlist-counter');
+            const container = document.getElementById('wishlist-items-container');
+            counter.innerText = wishlist.length;
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16 text-gray-400">
+                        <i class="fa-regular fa-heart text-4xl mb-3"></i>
+                        <p class="text-xs font-bold uppercase tracking-wider">Wishlist is empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            wishlist.forEach(id => {
+                const product = productsData.find(p => p.id === id);
+                if (!product) return;
+
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex gap-4 p-3 border border-brand-borderGrey bg-brand-lightGrey relative items-center';
+                itemEl.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover">
+                    <div class="flex-1">
+                        <h5 class="font-bold text-xs uppercase text-brand-black line-clamp-1">${product.name}</h5>
+                        <p class="font-extrabold text-xs">Rs. ${product.price.toLocaleString()}</p>
+                    </div>
+                    <button onclick="openProductDetailModal(${product.id}); toggleWishlistDrawer();" class="bg-brand-black text-white text-[10px] font-bold px-3 py-2 uppercase">View</button>
+                `;
+                container.appendChild(itemEl);
+            });
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const counter = document.getElementById('cart-counter');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const shippingFeeEl = document.getElementById('cart-shipping-fee');
+            const totalEl = document.getElementById('cart-total');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            counter.innerText = totalItems;
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shippingFee = (subtotal >= 3000 || subtotal === 0) ? 0 : 250;
+            const grandTotal = subtotal + shippingFee;
+
+            subtotalEl.innerText = `Rs. ${subtotal.toLocaleString()}`;
+            shippingFeeEl.innerText = shippingFee === 0 ? 'FREE' : `Rs. ${shippingFee}`;
+            totalEl.innerText = `Rs. ${grandTotal.toLocaleString()}`;
+
+            document.getElementById('checkout-subtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
+            document.getElementById('checkout-total').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+
+            // Free shipping goal bar update
+            const progressPct = Math.min(100, (subtotal / 3000) * 100);
+            document.getElementById('shipping-progress-bar').style.width = `${progressPct}%`;
+            const shippingText = document.getElementById('shipping-progress-text');
+            if (subtotal >= 3000) {
+                shippingText.innerHTML = `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check"></i> Unlocked FREE Delivery!</span>`;
+            } else {
+                const diff = 3000 - subtotal;
+                shippingText.innerHTML = `<span>Add Rs. ${diff.toLocaleString()} for Free Delivery</span>`;
+            }
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16 text-gray-400">
+                        <i class="fa-solid fa-bag-shopping text-4xl mb-3"></i>
+                        <p class="text-xs font-bold uppercase tracking-wider">Your Shopping Bag is Empty</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            cart.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex gap-4 p-3 border border-brand-borderGrey bg-brand-lightGrey relative';
+                itemEl.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-20 object-cover">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between">
+                                <h5 class="font-bold text-xs uppercase text-brand-black line-clamp-1">${item.name}</h5>
+                                <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-black text-sm pl-2">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Size: ${item.size}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center border border-brand-borderGrey bg-white">
+                                <button onclick="changeQty(${index}, -1)" class="px-2 py-0.5 text-xs font-bold">-</button>
+                                <span class="px-2 text-xs font-bold">${item.quantity}</span>
+                                <button onclick="changeQty(${index}, 1)" class="px-2 py-0.5 text-xs font-bold">+</button>
+                            </div>
+                            <span class="font-extrabold text-xs">Rs. ${(item.price * item.quantity).toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(itemEl);
+            });
+        }
+
+        function changeQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            saveCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            const content = document.getElementById('cart-drawer-content');
+
+            if (forceOpen || drawer.classList.contains('opacity-0')) {
+                drawer.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.add('translate-x-full');
+            }
+        }
+
+        function toggleWishlistDrawer() {
+            const drawer = document.getElementById('wishlist-drawer');
+            const content = document.getElementById('wishlist-drawer-content');
+
+            if (drawer.classList.contains('opacity-0')) {
+                drawer.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.add('translate-x-full');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const drawer = document.getElementById('mobile-menu-drawer');
+
+            if (menu.classList.contains('opacity-0')) {
+                menu.classList.remove('opacity-0', 'pointer-events-none');
+                drawer.classList.remove('-translate-x-full');
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none');
+                drawer.classList.add('-translate-x-full');
+            }
+        }
+
+        function toggleAccountModal() {
+            const modal = document.getElementById('account-modal');
+            modal.classList.toggle('opacity-0');
+            modal.classList.toggle('pointer-events-none');
+        }
+
+        function toggleSearchModal() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.toggle('opacity-0');
+            modal.classList.toggle('pointer-events-none');
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Your shopping bag is empty!');
+                return;
+            }
+            toggleCartDrawer();
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function selectPaymentMethod(element, method) {
+            document.querySelectorAll('.payment-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+
+            const cardFields = document.getElementById('card-details-fields');
+            if (method === 'card') {
+                cardFields.classList.remove('hidden');
+            } else {
+                cardFields.classList.add('hidden');
+            }
+        }
+
+        function liveSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+
+            if (query.trim() === '') return;
+
+            const filtered = productsData.filter(p => p.name.toLowerCase().includes(query) || p.category.includes(query));
+
+            filtered.slice(0, 10).forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'py-2 flex items-center justify-between cursor-pointer hover:bg-gray-50 px-2';
+                item.onclick = () => {
+                    toggleSearchModal();
+                    openProductDetailModal(product.id);
+                };
+                item.innerHTML = `
+                    <span class="font-bold uppercase text-xs">${product.name}</span>
+                    <span class="font-extrabold text-xs text-brand-black">Rs. ${product.price}</span>
+                `;
+                resultsContainer.appendChild(item);
+            });
+        }
+
+        const policyTexts = {
+            privacy: {
+                title: "Privacy Policy",
+                content: `<p>At ZAYLO, customer privacy is paramount. All shipping and payment entries are encrypted.</p><p>We do not disclose customer contact information to external advertisers.</p>`
+            },
+            shipping: {
+                title: "Shipping Policy",
+                content: `<p>Express delivery across all cities in Pakistan within 2-4 business days.</p><p>Orders exceeding Rs. 3,000 enjoy automatic FREE courier dispatch.</p>`
+            },
+            returns: {
+                title: "Return & Exchange Policy",
+                content: `<p>Enjoy an easy 7-day return and exchange window. Unwashed apparel with original tags attached can be returned or exchanged effortlessly.</p>`
+            },
+            terms: {
+                title: "Terms & Conditions",
+                content: `<p>By placing an order via ZAYLO website or purchasing directly at our outlets, you agree to our standard shopping terms and store policy.</p>`
+            }
+        };
+
+        function openPolicyModal(type) {
+            const modal = document.getElementById('policy-modal');
+            const title = document.getElementById('policy-title');
+            const content = document.getElementById('policy-content');
+
+            title.innerText = policyTexts[type].title;
+            content.innerHTML = policyTexts[type].content;
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closePolicyModal() {
+            const modal = document.getElementById('policy-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function handleCheckout(e) {
+            e.preventDefault();
+            showToast('Order Placed Successfully! Thank you for shopping with ZAYLO.');
+            cart = [];
+            saveCart();
+            closeCheckoutModal();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            showToast('Logged in successfully');
+            toggleAccountModal();
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            showToast('Your inquiry has been submitted');
+            e.target.reset();
+        }
+
+        function handleNewsletter(e) {
+            e.preventDefault();
+            showToast('Subscribed to Drop Updates');
+            e.target.reset();
+        }}
+    </script>
+</body>
+</html>

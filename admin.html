@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYLO | Monochrome Super-Admin Portal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zylo: {
+                            black: '#000000',
+                            charcoal: '#121212',
+                            cardBg: '#FFFFFF',
+                            border: '#E0E0E0',
+                            gray: '#707070'
+                        }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #000000; color: #000000; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #000000; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen p-1 sm:p-4">
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[250] flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- MAIN ADMIN CONTAINER -->
+    <div class="bg-white w-full max-w-[1550px] h-[96vh] flex flex-col lg:flex-row rounded-2xl border-2 border-black shadow-2xl overflow-hidden relative">
+        
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="w-full lg:w-64 bg-black text-white flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-gray-800 select-none shrink-0 z-20">
+            <div>
+                <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-white text-black font-black flex items-center justify-center text-xs">AS</div>
+                        <div>
+                            <h4 id="sidebar-admin-name" class="text-xs font-black uppercase tracking-wider text-white">AMNA SHAKIR</h4>
+                            <p class="text-[10px] text-gray-400 font-mono">SUPER-ADMIN</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="lg:hidden text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Nav Tabs -->
+                <nav class="p-3 space-y-1 text-xs font-bold uppercase tracking-wider">
+                    <button onclick="switchAdminTab('dashboard'); toggleMobileMenu();" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-black transition-all shadow-md">
+                        <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+                    </button>
+                    <button onclick="switchAdminTab('profile'); toggleMobileMenu();" id="nav-profile" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-user-gear w-5"></i> Admin Profile
+                    </button>
+                    <button onclick="switchAdminTab('inventory'); toggleMobileMenu();" id="nav-inventory" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-boxes-stacked w-5"></i> Inventory (<span id="inv-count-badge">0</span>)
+                    </button>
+                    <button onclick="switchAdminTab('orders'); toggleMobileMenu();" id="nav-orders" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-bag-shopping w-5"></i> Orders (<span id="ord-count-badge">0</span>)
+                    </button>
+                    <button onclick="switchAdminTab('shipping'); toggleMobileMenu();" id="nav-shipping" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-truck-fast w-5"></i> Shipping Zones
+                    </button>
+                    <button onclick="switchAdminTab('banners'); toggleMobileMenu();" id="nav-banners" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-images w-5"></i> Banners
+                    </button>
+                    <button onclick="switchAdminTab('coupons'); toggleMobileMenu();" id="nav-coupons" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-ticket w-5"></i> Coupons
+                    </button>
+                    <button onclick="switchAdminTab('roles'); toggleMobileMenu();" id="nav-roles" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                        <i class="fa-solid fa-user-shield w-5"></i> Staff & Roles
+                    </button>
+                </nav>
+            </div>
+
+            <div class="p-4 border-t border-gray-800 space-y-3">
+                <a href="index.html" class="w-full flex items-center justify-center gap-2 bg-white text-black py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-widest hover:bg-gray-200 transition-all">
+                    <i class="fa-solid fa-house"></i> Back to Store (Home)
+                </a>
+                <div class="flex items-center justify-between text-[10px] text-gray-400">
+                    <span>STORAGE: ACTIVE</span>
+                    <button onclick="resetLocalStorage()" class="text-white hover:underline font-bold text-[9px]">Reset</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW AREA -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50">
+            <header class="h-20 bg-white border-b border-gray-200 px-6 sm:px-8 flex items-center justify-between shrink-0 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMobileMenu()" class="lg:hidden text-black text-xl"><i class="fa-solid fa-bars"></i></button>
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-gray-500 block">ZYLO Enterprise Hub</span>
+                        <h1 id="page-title" class="text-lg sm:text-xl font-black uppercase text-black tracking-tight">Dashboard Overview</h1>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="low-stock-alert-badge" class="hidden items-center gap-2 bg-black text-white px-3 py-1.5 rounded-xl text-xs font-bold animate-pulse cursor-pointer" onclick="switchAdminTab('inventory')">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="low-stock-count-text">0 Low</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-3 py-1.5 bg-black text-white rounded-lg shadow-sm">LIVE STORAGE</span>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-4 sm:p-8" id="admin-main-view"></main>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="product-modal" class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl border-2 border-black shadow-2xl relative">
+            <button onclick="closeModal('product-modal')" class="absolute top-4 right-4 text-black text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-black uppercase mb-4">Add Product to Store</h3>
+            <form onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
+                <div><label class="block font-bold uppercase mb-1">Product Name</label><input type="text" id="p-name" required placeholder="ZYLO Oversized Tee" class="w-full p-2.5 border rounded-lg"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block font-bold uppercase mb-1">Category</label><input type="text" id="p-cat" required placeholder="Men / Women / Kids / Teens" class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-bold uppercase mb-1">SKU Code</label><input type="text" id="p-sku" required placeholder="ZYL-05" class="w-full p-2.5 border rounded-lg uppercase"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block font-bold uppercase mb-1">Price (PKR)</label><input type="number" id="p-price" required placeholder="3899" class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-bold uppercase mb-1">Stock Units</label><input type="number" id="p-stock" required placeholder="15" class="w-full p-2.5 border rounded-lg"></div>
+                </div>
+                <div><label class="block font-bold uppercase mb-1">Image URL</label><input type="url" id="p-img" required placeholder="https://i.pinimg.com/..." class="w-full p-2.5 border rounded-lg"></div>
+                <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-extrabold uppercase tracking-widest mt-2 hover:bg-gray-800">Save & Sync to Store</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="staff-modal" class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl border-2 border-black shadow-2xl relative">
+            <button onclick="closeModal('staff-modal')" class="absolute top-4 right-4 text-black text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-black uppercase mb-4">Add New Staff Member</h3>
+            <form onsubmit="handleAddNewStaff(event)" class="space-y-3 text-xs">
+                <div><label class="block font-bold uppercase mb-1">Staff Name</label><input type="text" id="st-name" required placeholder="Ahmed Khan" class="w-full p-2.5 border rounded-lg"></div>
+                <div><label class="block font-bold uppercase mb-1">Email Address (Gmail)</label><input type="email" id="st-email" required placeholder="ahmed@gmail.com" class="w-full p-2.5 border rounded-lg"></div>
+                <div>
+                    <label class="block font-bold uppercase mb-1">Role Permission</label>
+                    <select id="st-role" class="w-full p-2.5 border rounded-lg uppercase font-bold">
+                        <option>Fulfillment Clerk</option>
+                        <option>Inventory Manager</option>
+                        <option>Customer Support</option>
+                        <option>Co-Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-extrabold uppercase tracking-widest mt-2 hover:bg-gray-800">Save Staff Member</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="stock-alert-modal" class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl border-2 border-black shadow-2xl relative text-center">
+            <button onclick="closeModal('stock-alert-modal')" class="absolute top-4 right-4 text-black text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3 class="text-lg font-black uppercase mb-2">Low Stock Warning!</h3>
+            <p id="alert-product-desc" class="text-xs text-gray-700 mb-6 font-medium leading-relaxed"></p>
+            <button onclick="closeModal('stock-alert-modal')" class="w-full bg-black text-white py-3 rounded-lg font-extrabold uppercase tracking-widest text-xs">Got it, Restock Soon</button>
+        </div>
+    </div>
+
+    <div id="coupon-modal" class="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm p-6 rounded-2xl border-2 border-black shadow-2xl relative">
+            <button onclick="closeModal('coupon-modal')" class="absolute top-4 right-4 text-black text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-black uppercase mb-4">Create Coupon</h3>
+            <form onsubmit="handleAddNewCoupon(event)" class="space-y-3 text-xs">
+                <div><label class="block font-bold uppercase mb-1">Coupon Code</label><input type="text" id="c-code" required placeholder="EID50" class="w-full p-2.5 border rounded-lg uppercase"></div>
+                <div><label class="block font-bold uppercase mb-1">Discount</label><input type="text" id="c-desc" required placeholder="25% OFF" class="w-full p-2.5 border rounded-lg"></div>
+                <button type="submit" class="w-full bg-black text-white py-3 rounded-lg font-extrabold uppercase tracking-widest mt-2 hover:bg-gray-800">Save Coupon</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'dashboard';
+
+        let adminProfile = JSON.parse(localStorage.getItem('zylo_admin_profile_v3')) || {
+            name: "Amna Shakir",
+            email: "amnashakir0307@gmail.com",
+            phone: "+92 300 1234567",
+            role: "Super-Admin & Lead Architect",
+            location: "Karachi, Pakistan",
+            avatarText: "AS"
+        };
+
+        // Forced V3 storage keys so it bypasses old browser cache and loads all 8 products & 15 orders[cite: 6]
+        let products = JSON.parse(localStorage.getItem('zylo_admin_products_v3')) || [
+            { id: 1, name: "ZYLO Heavyweight Boxy Hoodie", category: "Men", price: 3899, stock: 12, sku: "ZYL-H01", image: "https://i.pinimg.com/736x/44/a0/13/44a01391833a4d79e885ca8b61bfc31b.jpg" },
+            { id: 2, name: "Minimalist Acid Wash Tee", category: "Men", price: 1899, stock: 45, sku: "ZYL-T02", image: "https://i.pinimg.com/736x/65/09/6d/65096d5c4cae6d7b54afa2934311229b.jpg" },
+            { id: 3, name: "Women Cropped Fleece Hoodie", category: "Women", price: 3499, stock: 15, sku: "ZYL-W04", image: "https://i.pinimg.com/736x/c4/eb/df/c4ebdf44385178056e609c9f50560232.jpg" },
+            { id: 4, name: "Women Urban Tactical Trousers", category: "Women", price: 4299, stock: 30, sku: "ZYL-W05", image: "https://i.pinimg.com/736x/93/81/33/93813383e56abd481044207fdd4a4455.jpg" },
+            { id: 5, name: "Junior Cotton Tee (Age 2-8)", category: "Kids", price: 1299, stock: 8, sku: "ZYL-K01", image: "https://i.pinimg.com/736x/12/21/df/1221dfa1cfb7f97670d8122ed920f59f.jpg" },
+            { id: 6, name: "Junior Summer Graphic Tee", category: "Kids", price: 1399, stock: 25, sku: "ZYL-K02", image: "https://i.pinimg.com/736x/2b/34/f3/2b34f366f70ccab9174f6d156358beac.jpg" },
+            { id: 7, name: "Youth Streetwear Cargo Pants (9-15)", category: "Teens", price: 2999, stock: 18, sku: "ZYL-TN01", image: "https://i.pinimg.com/736x/57/15/5f/57155feb1b2a3ab6744d2d7288355e58.jpg" },
+            { id: 8, name: "Teen Oversized Hoodie", category: "Teens", price: 3299, stock: 40, sku: "ZYL-TN02", image: "https://i.pinimg.com/736x/5a/bb/33/5abb33fa45815f4c56d269f8ba2217cd.jpg" }
+        ];
+
+        let orders = JSON.parse(localStorage.getItem('zylo_admin_orders_v3')) || [
+            { id: "ORD-1001", name: "Ali Khan", city: "Karachi", total: 4149, status: "Delivered", date: "2026-06-01" },
+            { id: "ORD-1002", name: "Fatima Noor", city: "Lahore", total: 3749, status: "Shipped", date: "2026-06-02" },
+            { id: "ORD-1003", name: "Usman Ahmed", city: "Islamabad", total: 2049, status: "Pending", date: "2026-06-03" },
+            { id: "ORD-1004", name: "Zainab Bibi", city: "Faisalabad", total: 5899, status: "Confirmed", date: "2026-06-04" },
+            { id: "ORD-1005", name: "Bilal Raza", city: "Multan", total: 1899, status: "Pending", date: "2026-06-05" },
+            { id: "ORD-1006", name: "Ayesha Omer", city: "Peshawar", total: 4299, status: "Shipped", date: "2026-06-05" },
+            { id: "ORD-1007", name: "Danyal Malik", city: "Quetta", total: 3499, status: "Delivered", date: "2026-06-06" },
+            { id: "ORD-1008", name: "Hira Tariq", city: "Karachi", total: 7798, status: "Confirmed", date: "2026-06-06" },
+            { id: "ORD-1009", name: "Hamza Sheikh", city: "Lahore", total: 2599, status: "Pending", date: "2026-06-07" },
+            { id: "ORD-1010", name: "Sana Mir", city: "Islamabad", total: 4149, status: "Delivered", date: "2026-06-07" },
+            { id: "ORD-1011", name: "Kamran Akmal", city: "Sialkot", total: 3299, status: "Pending", date: "2026-06-08" },
+            { id: "ORD-1012", name: "Mehwish Hayat", city: "Karachi", total: 1299, status: "Shipped", date: "2026-06-08" },
+            { id: "ORD-1013", name: "Fahad Mustafa", city: "Hyderabad", total: 4599, status: "Confirmed", date: "2026-06-09" },
+            { id: "ORD-1014", name: "Mahira Khan", city: "Lahore", total: 3899, status: "Delivered", date: "2026-06-09" },
+            { id: "ORD-1015", name: "Shehryar Munawar", city: "Rawalpindi", total: 2999, status: "Pending", date: "2026-06-10" }
+        ];
+
+        let shippingZones = JSON.parse(localStorage.getItem('zylo_admin_shipping_v3')) || [
+            { city: "Karachi", fee: 250 }, 
+            { city: "Lahore", fee: 300 }, 
+            { city: "Islamabad", fee: 300 }, 
+            { city: "Other Cities", fee: 350 }
+        ];
+
+        let banners = JSON.parse(localStorage.getItem('zylo_admin_banners_v3')) || [
+            { title: "NEW COLLECTION • DROP 01", subtitle: "Heavyweight 320 GSM Combed Cotton" }
+        ];
+
+        let coupons = JSON.parse(localStorage.getItem('zylo_admin_coupons_v3')) || [
+            { id: 1, code: "ZYLO10", discount: "10% OFF" }
+        ];
+        
+        let staffMembers = JSON.parse(localStorage.getItem('zylo_staff_v3')) || [
+            { name: "Amna Shakir", role: "Super-Admin", email: "amnashakir0307@gmail.com" },
+            { name: "Hamza Staff", role: "Fulfillment Clerk", email: "hamza.fulfilment@gmail.com" },
+            { name: "Ayesha Inventory", role: "Inventory Manager", email: "ayesha.stock@gmail.com" },
+            { name: "Bilal Support", role: "Customer Support", email: "bilal.help@gmail.com" }
+        ];
+
+        window.addEventListener('load', () => {
+            syncLocalStorageToApp();
+            updateBadges();
+            renderAdminView();
+        });
+
+        function syncLocalStorageToApp() {
+            localStorage.setItem('zylo_admin_products_v3', JSON.stringify(products));
+            localStorage.setItem('zylo_admin_orders_v3', JSON.stringify(orders));
+            localStorage.setItem('zylo_admin_shipping_v3', JSON.stringify(shippingZones));
+            localStorage.setItem('zylo_admin_banners_v3', JSON.stringify(banners));
+            localStorage.setItem('zylo_admin_coupons_v3', JSON.stringify(coupons));
+            localStorage.setItem('zylo_staff_v3', JSON.stringify(staffMembers));
+            localStorage.setItem('zylo_admin_profile_v3', JSON.stringify(adminProfile));
+
+            document.getElementById('sidebar-admin-name').innerText = adminProfile.name.toUpperCase();
+            document.getElementById('sidebar-avatar').innerText = adminProfile.avatarText || adminProfile.name.substring(0,2).toUpperCase();
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-black text-white px-5 py-3 text-xs font-bold uppercase tracking-widest shadow-2xl border-l-4 border-white flex items-center gap-2 rounded-lg';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-white"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function updateBadges() {
+            document.getElementById('inv-count-badge').innerText = products.length;
+            document.getElementById('ord-count-badge').innerText = orders.length;
+            const lowItems = products.filter(p => p.stock < 20);
+            const badge = document.getElementById('low-stock-alert-badge');
+            if(lowItems.length > 0) {
+                badge.classList.remove('hidden'); badge.classList.add('flex');
+                document.getElementById('low-stock-count-text').innerText = `${lowItems.length} Low (<20)`;
+            } else {
+                badge.classList.add('hidden'); badge.classList.remove('flex');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const sb = document.getElementById('sidebar');
+            if(window.innerWidth < 1024) sb.classList.toggle('hidden');
+        }
+
+        function switchAdminTab(tab) {
+            currentTab = tab;
+            ['dashboard', 'profile', 'inventory', 'orders', 'shipping', 'banners', 'coupons', 'roles'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if(btn) {
+                    btn.className = t === tab ? 
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-black transition-all shadow-md font-bold uppercase tracking-wider text-xs" : 
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all font-bold uppercase tracking-wider text-xs";
+                }
+            });
+            const titles = {
+                dashboard: "Enterprise Dashboard & Sales Analytics",
+                profile: "Super-Admin Gmail & Profile Settings",
+                inventory: "Inventory & Stock Control (<20 Alert)",
+                orders: "Orders & Delivery Fulfillment (15 Orders)",
+                shipping: "Delivery Zones & Shipping Rates",
+                banners: "Website Banners & Hero Sliders",
+                coupons: "Discount Coupons System",
+                roles: "Staff & Role-Based Access Control"
+            };
+            document.getElementById('page-title').innerText = titles[tab];
+            renderAdminView();
+        }
+
+        function renderAdminView() {
+            updateBadges();
+            const area = document.getElementById('admin-main-view');
+            
+            if (currentTab === 'dashboard') {
+                const totalSales = orders.reduce((sum, o) => sum + o.total, 0);
+                const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+                area.innerHTML = `
+                    <div class="space-y-6 max-w-7xl mx-auto">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-5 rounded-2xl border border-black shadow-sm"><span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Total Products</span><h3 class="text-3xl font-black mt-1">${products.length}</h3></div>
+                            <div class="bg-white p-5 rounded-2xl border border-black shadow-sm"><span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Total Orders</span><h3 class="text-3xl font-black mt-1">${orders.length}</h3></div>
+                            <div class="bg-white p-5 rounded-2xl border border-black shadow-sm"><span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Gross Revenue</span><h3 class="text-3xl font-black mt-1">Rs. ${totalSales.toLocaleString()}</h3></div>
+                            <div class="bg-white p-5 rounded-2xl border border-black shadow-sm"><span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Warehouse Stock</span><h3 class="text-3xl font-black mt-1">${totalStock} pcs</h3></div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-black shadow-sm">
+                            <h4 class="font-black uppercase text-xs tracking-wider mb-4">Stock Health (Red if &lt;20 pcs, Normal if &gt;=20 pcs)</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                ${products.map(p => `
+                                    <div onclick="checkProductStockDetail(${p.id})" class="p-3.5 rounded-xl border ${p.stock < 20 ? 'border-red-600 bg-red-50 text-red-900 cursor-pointer shadow-sm' : 'border-gray-200 bg-gray-50'} flex items-center justify-between">
+                                        <div>
+                                            <h5 class="font-bold text-xs uppercase truncate max-w-[160px]">${p.name}</h5>
+                                            <p class="text-[10px] opacity-75 mt-0.5">Rs. ${p.price.toLocaleString()}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-xs font-black">${p.stock} pcs</span>${p.stock < 20 ? '<span class="block text-[8px] font-extrabold uppercase tracking-widest text-red-600 underline">Low Stock (Red)</span>' : '<span class="block text-[8px] text-emerald-600 font-bold uppercase">Safe</span>'}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'profile') {
+                area.innerHTML = `
+                    <div class="space-y-6 max-w-4xl mx-auto">
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-black shadow-sm flex flex-col sm:flex-row items-center gap-6">
+                            <div class="w-24 h-24 rounded-full bg-black text-white font-black flex items-center justify-center text-3xl shadow-xl border-4 border-gray-100 shrink-0">
+                                ${adminProfile.avatarText || 'AS'}
+                            </div>
+                            <div class="text-center sm:text-left flex-1">
+                                <span class="bg-black text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md">Verified Super-Admin</span>
+                                <h3 class="text-2xl font-black uppercase mt-2">${adminProfile.name}</h3>
+                                <p class="text-xs text-gray-500 font-mono mt-0.5"><i class="fa-solid fa-envelope mr-1"></i> ${adminProfile.email} • ${adminProfile.location}</p>
+                                <p class="text-xs font-bold text-gray-700 mt-2">${adminProfile.role}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-black shadow-sm">
+                            <h4 class="font-black uppercase text-xs tracking-wider mb-6">Edit Admin Credentials & Gmail Account</h4>
+                            <form onsubmit="handleUpdateAdminProfile(event)" class="space-y-4 text-xs">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div><label class="block font-bold uppercase mb-1">Full Name</label><input type="text" id="adm-name" value="${adminProfile.name}" required class="w-full p-3 border border-black rounded-xl font-bold"></div>
+                                    <div><label class="block font-bold uppercase mb-1">Admin Gmail Address</label><input type="email" id="adm-email" value="${adminProfile.email}" required placeholder="admin@gmail.com" class="w-full p-3 border border-black rounded-xl font-bold font-mono"></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div><label class="block font-bold uppercase mb-1">Phone Number</label><input type="text" id="adm-phone" value="${adminProfile.phone}" required class="w-full p-3 border border-black rounded-xl font-bold"></div>
+                                    <div><label class="block font-bold uppercase mb-1">Office Location</label><input type="text" id="adm-loc" value="${adminProfile.location}" required class="w-full p-3 border border-black rounded-xl font-bold"></div>
+                                </div>
+                                <div class="pt-4 border-t border-gray-200">
+                                    <h5 class="font-black uppercase text-[11px] mb-3">Security & Password Update</h5>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div><label class="block font-bold uppercase mb-1">New Password (Min 6 chars)</label><input type="password" id="adm-pass" placeholder="••••••••" class="w-full p-3 border border-black rounded-xl"></div>
+                                        <div><label class="block font-bold uppercase mb-1">Confirm Password</label><input type="password" id="adm-pass-confirm" placeholder="••••••••" class="w-full p-3 border border-black rounded-xl"></div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full sm:w-auto bg-black text-white px-8 py-3.5 rounded-xl font-extrabold uppercase tracking-widest hover:bg-gray-800 transition-all shadow-md">Save Profile Settings & Gmail</button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'inventory') {
+                area.innerHTML = `
+                    <div class="space-y-6 max-w-7xl mx-auto">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-black shadow-sm gap-4">
+                            <div><h4 class="font-bold text-xs uppercase tracking-wider">Inventory Management</h4><p class="text-[11px] text-gray-500">Includes Men, Women, Kids, and Teens apparel with Pinterest links.</p></div>
+                            <button onclick="openModal('product-modal')" class="bg-black text-white px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-widest hover:bg-gray-800">+ Add Product</button>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-black p-6 shadow-sm overflow-x-auto">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-gray-100 uppercase text-[10px] text-black font-black">
+                                    <tr><th class="p-3">Image</th><th class="p-3">Name</th><th class="p-3">Category</th><th class="p-3">Price (PKR)</th><th class="p-3">Stock Units</th><th class="p-3 text-right">Actions</th></tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    ${products.map((p, idx) => `
+                                        <tr>
+                                            <td class="p-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded-lg border border-black"></td>
+                                            <td class="p-3 font-bold">${p.name}</td>
+                                            <td class="p-3 font-mono font-semibold text-gray-600">${p.category}</td>
+                                            <td class="p-3"><div class="flex items-center gap-1 font-extrabold"><span>Rs.</span><input type="number" value="${p.price}" onchange="updateProductField(${idx}, 'price', this.value)" class="w-24 p-1 border border-black rounded font-mono font-bold"></div></td>
+                                            <td class="p-3">
+                                                <div class="flex items-center gap-2">
+                                                    <input type="number" value="${p.stock}" onchange="updateProductField(${idx}, 'stock', this.value)" class="w-16 p-1 border rounded font-mono font-bold ${p.stock < 20 ? 'border-red-600 bg-red-100 text-red-900' : 'border-black'}">
+                                                    <span class="text-[10px] text-gray-500">pcs</span>
+                                                    ${p.stock < 20 ? `<button onclick="checkProductStockDetail(${p.id})" class="text-red-600 text-[10px] font-extrabold underline">Low Stock</button>` : ''}
+                                                </div>
+                                            </td>
+                                            <td class="p-3 text-right"><button onclick="deleteProduct(${p.id})" class="text-black hover:underline font-bold bg-gray-100 px-3 py-1 rounded">Delete</button></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'orders') {
+                area.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-black p-6 shadow-sm max-w-7xl mx-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-xs uppercase tracking-wider">Orders & Delivery Fulfillment</h4>
+                            <span class="text-[10px] font-mono font-bold bg-black text-white px-3 py-1 rounded-lg">Showing All ${orders.length} Records</span>
+                        </div>
+                        <table class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-gray-100 uppercase text-[10px] text-black font-black">
+                                <tr><th class="p-3">Order ID</th><th class="p-3">Customer</th><th class="p-3">City</th><th class="p-3">Total</th><th class="p-3">Date</th><th class="p-3">Status</th></tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                ${orders.map(o => `
+                                    <tr>
+                                        <td class="p-3 font-mono font-bold">${o.id}</td>
+                                        <td class="p-3 font-semibold">${o.name}</td>
+                                        <td class="p-3">${o.city}</td>
+                                        <td class="p-3 font-extrabold">Rs. ${o.total.toLocaleString()}</td>
+                                        <td class="p-3 font-mono text-gray-500">${o.date}</td>
+                                        <td class="p-3"><select onchange="updateOrderStatus('${o.id}', this.value)" class="p-1.5 border border-black rounded text-[10px] uppercase font-bold bg-gray-50"><option ${o.status==='Pending'?'selected':''}>Pending</option><option${o.status==='Confirmed'?'selected':''}>Confirmed</option><option ${o.status==='Shipped'?'selected':''}>Shipped</option><option${o.status==='Delivered'?'selected':''}>Delivered</option></select></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else if (currentTab === 'shipping') {
+                area.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-black p-6 shadow-sm max-w-2xl mx-auto">
+                        <h4 class="font-bold text-xs uppercase tracking-wider mb-2">Shipping Zones & Rates (PKR)</h4>
+                        <div class="space-y-3 mt-4">
+                            ${shippingZones.map((s, idx) => `
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-black text-xs font-bold">
+                                    <span>${s.city}</span>
+                                    <div class="flex items-center gap-3"><input type="number" value="${s.fee}" onchange="updateShippingFee(${idx}, this.value)" class="w-24 p-1.5 border border-black rounded text-right font-mono"><span>PKR</span></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'banners') {
+                area.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-black p-6 shadow-sm max-w-3xl mx-auto">
+                        <h4 class="font-bold text-xs uppercase tracking-wider mb-2">Hero Section Banners</h4>
+                        <div class="space-y-4 mt-4">
+                            ${banners.map((b, idx) => `
+                                <div class="p-4 bg-gray-50 rounded-xl border border-black space-y-2 text-xs">
+                                    <input type="text" value="${b.title}" onchange="updateBanner(${idx}, 'title', this.value)" class="w-full p-2 border border-black rounded font-bold uppercase">
+                                    <input type="text" value="${b.subtitle}" onchange="updateBanner(${idx}, 'subtitle', this.value)" class="w-full p-2 border border-black rounded">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'coupons') {
+                area.innerHTML = `
+                    <div class="space-y-6 max-w-3xl mx-auto">
+                        <div class="flex justify-between items-center bg-white p-6 rounded-2xl border border-black shadow-sm">
+                            <div><h4 class="font-bold text-xs uppercase tracking-wider">Discount Coupons</h4></div>
+                            <button onclick="openModal('coupon-modal')" class="bg-black text-white px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-widest hover:bg-gray-800">+ Add Coupon</button>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-black p-6 shadow-sm">
+                            <ul class="space-y-3">
+                                ${coupons.map(c => `
+                                    <li class="flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-black text-xs font-bold">
+                                        <span class="font-mono text-sm">${c.code}</span><span class="bg-black text-white px-3 py-1 rounded">${c.discount}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'roles') {
+                area.innerHTML = `
+                    <div class="space-y-6 max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center bg-white p-6 rounded-2xl border border-black shadow-sm">
+                            <div><h4 class="font-bold text-xs uppercase tracking-wider">Staff & Gmail Accounts Management</h4></div>
+                            <button onclick="openModal('staff-modal')" class="bg-black text-white px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-widest hover:bg-gray-800">+ Add Staff</button>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-black p-6 shadow-sm overflow-x-auto">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-gray-100 uppercase text-[10px] text-black font-black">
+                                    <tr><th class="p-3">Staff Member</th><th class="p-3">Gmail Address</th><th class="p-3">Assigned Role</th><th class="p-3 text-right">Action</th></tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    ${staffMembers.map((st, idx) => `
+                                        <tr>
+                                            <td class="p-3 font-bold">${st.name}</td>
+                                            <td class="p-3 font-mono text-gray-500">${st.email}</td>
+                                            <td class="p-3 font-bold bg-black text-white px-2 py-1 rounded text-center">${st.role}</td>
+                                            <td class="p-3 text-right"><button onclick="deleteStaff(${idx})" class="text-black hover:underline font-bold bg-gray-100 px-3 py-1 rounded">Remove</button></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('opacity-0', 'pointer-events-none'); }
+        function closeModal(id) { document.getElementById(id).classList.add('opacity-0', 'pointer-events-none'); }
+
+        function handleUpdateAdminProfile(e) {
+            e.preventDefault();
+            adminProfile.name = document.getElementById('adm-name').value;
+            adminProfile.email = document.getElementById('adm-email').value;
+            adminProfile.phone = document.getElementById('adm-phone').value;
+            adminProfile.location = document.getElementById('adm-loc').value;
+            adminProfile.avatarText = adminProfile.name.substring(0,2).toUpperCase();
+            
+            const pass = document.getElementById('adm-pass').value;
+            const passConfirm = document.getElementById('adm-pass-confirm').value;
+            
+            if(pass && pass.length < 6) { alert("Password must be at least 6 characters long!"); return; }
+            if(pass && pass !== passConfirm) { alert("Passwords do not match!"); return; }
+
+            syncLocalStorageToApp();
+            showToast("Admin profile updated & saved!");
+            renderAdminView();
+        }
+
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const category = document.getElementById('p-cat').value;
+            const price = Number(document.getElementById('p-price').value);
+            const stock = Number(document.getElementById('p-stock').value);
+            const sku = document.getElementById('p-sku').value.toUpperCase();
+            const image = document.getElementById('p-img').value;
+
+            products.unshift({ id: Date.now(), name, category, price, stock, sku, image });
+            syncLocalStorageToApp();
+            closeModal('product-modal');
+            showToast(`Product "${name}" saved!`);
+            renderAdminView();
+        }
+
+        function handleAddNewStaff(e) {
+            e.preventDefault();
+            const name = document.getElementById('st-name').value;
+            const email = document.getElementById('st-email').value;
+            const role = document.getElementById('st-role').value;
+
+            staffMembers.push({ name, email, role });
+            syncLocalStorageToApp();
+            closeModal('staff-modal');
+            showToast(`Staff member "${name}" saved!`);
+            renderAdminView();
+        }
+
+        function deleteStaff(idx) {
+            if(confirm("Remove this staff member?")) {
+                staffMembers.splice(idx, 1);
+                syncLocalStorageToApp();
+                showToast("Staff removed");
+                renderAdminView();
+            }
+        }
+
+        function updateProductField(idx, field, val) {
+            products[idx][field] = Number(val);
+            syncLocalStorageToApp();
+            showToast(`Product ${field} updated`);
+            updateBadges();
+        }
+
+        function deleteProduct(id) {
+            if(confirm("Delete this product?")) {
+                products = products.filter(p => p.id !== id);
+                syncLocalStorageToApp();
+                showToast("Product deleted");
+                renderAdminView();
+            }
+        }
+
+        function checkProductStockDetail(id) {
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('alert-product-desc').innerHTML = `Product: <strong>${p.name}</strong><br>Current Stock: <strong class="underline">${p.stock} units</strong><br><br><em>Low stock threshold warning (&lt;20).</em>`;
+            openModal('stock-alert-modal');
+        }
+
+        function updateOrderStatus(id, newStatus) {
+            const ord = orders.find(o => o.id === id);
+            if(ord) {
+                ord.status = newStatus;
+                syncLocalStorageToApp();
+                showToast(`Order ${id} status saved as ${newStatus}`);
+            }
+        }
+
+        function updateShippingFee(idx, val) {
+            shippingZones[idx].fee = Number(val);
+            syncLocalStorageToApp();
+            showToast("Shipping rates saved");
+        }
+
+        function updateBanner(idx, field, val) {
+            banners[idx][field] = val;
+            syncLocalStorageToApp();
+            showToast("Banner saved");
+        }
+
+        function handleAddNewCoupon(e) {
+            e.preventDefault();
+            const code = document.getElementById('c-code').value.toUpperCase();
+            const discount = document.getElementById('c-desc').value;
+            coupons.push({ id: Date.now(), code, discount });
+            syncLocalStorageToApp();
+            closeModal('coupon-modal');
+            showToast(`Coupon ${code} created`);
+            renderAdminView();
+        }
+
+        function resetLocalStorage() {
+            if(confirm("Reset all local storage data?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

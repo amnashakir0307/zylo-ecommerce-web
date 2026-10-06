@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white overflow-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAYLO - Authentication</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            950: '#0a0a0a',
+                            900: '#111111',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #111111;
+        }
+        .tab-content {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .tab-hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(4px);
+        }
+        .tab-active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        * {
+            scrollbar-width: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+        .snake-card-wrapper {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            padding: 1px;
+        }
+        @keyframes rotateSnake {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .snake-glow {
+            position: absolute;
+            inset: -50%;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(0,0,0,0) 0deg, rgba(0,0,0,0) 270deg, #111111 320deg, #000000 360deg);
+            animation: rotateSnake 4s linear infinite;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex overflow-hidden select-none">
+
+    <!-- LEFT SIDE: Creative Visual / Branding Area -->
+    <div class="hidden lg:flex lg:w-1/2 bg-black text-white relative flex-col justify-between p-10 overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-neutral-800 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-neutral-900 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="relative z-10 flex items-center justify-between">
+            <span class="text-xs tracking-[0.3em] font-extrabold uppercase">ZAYLO STUDIO</span>
+            <!-- <a href="index.html" class="text-[11px] text-neutral-400 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Store
+            </a> -->
+        </div>
+
+        <div class="relative z-10 space-y-3 max-w-md">
+            <span class="px-3 py-1 bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-full text-[9px] uppercase tracking-widest font-mono">Monochrome Luxury</span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight uppercase leading-tight">Redefining Streetwear Experience.</h1>
+            <p class="text-[11px] text-neutral-400 leading-relaxed font-light">Join the exclusive ZAYLO ecosystem. Manage orders, track premium drops, and enjoy secure checkout.</p>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
+            <span>KARACHI, PK</span>
+            <span>&copy; 2026 ZAYLO INC.</span>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: Compact Form Container -->
+    <div class="w-full lg:w-1/2 h-full flex flex-col justify-center items-center p-4 sm:p-8 relative overflow-y-auto bg-white">
+        
+        <div class="lg:hidden absolute top-4 left-4">
+            <a href="index.html" class="text-[11px] text-neutral-600 hover:text-black uppercase tracking-widest flex items-center gap-1 font-bold">
+                <i class="fa-solid fa-arrow-left"></i> Home
+            </a>
+        </div>
+
+        <div class="w-full max-w-[360px] z-10">
+            
+            <!-- Toast Notification Box -->
+            <div id="toast" class="hidden mb-3 p-2.5 rounded-xl border border-neutral-200 bg-neutral-900 text-[11px] text-white flex items-center justify-between shadow-lg">
+                <span id="toast-message"></span>
+                <button onclick="hideToast()" class="text-[9px] uppercase font-bold tracking-wider ml-3 text-neutral-400 hover:text-white">Close</button>
+            </div>
+
+            <!-- Animated Snake Border Card Wrapper -->
+            <div class="snake-card-wrapper shadow-[0_15px_35px_rgba(0,0,0,0.06)]">
+                <div class="snake-glow"></div>
+
+                <!-- Card Inner Box (Compact Height) -->
+                <div class="bg-white rounded-2xl p-5 sm:p-6 relative z-10">
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs tracking-[0.25em] font-semibold text-black uppercase lg:hidden">ZAYLO</span>
+                        <span class="text-xs tracking-[0.25em] font-semibold text-black uppercase hidden lg:inline">Portal</span>
+                        <span id="account-status-badge" class="text-[9px] tracking-widest uppercase px-2 py-0.5 bg-neutral-100 border border-neutral-200 text-neutral-600 rounded-md">Sign In</span>
+                    </div>
+
+                    <!-- Tab Selector -->
+                    <div class="grid grid-cols-2 gap-1 p-1 bg-neutral-100 border border-neutral-200 rounded-xl mb-4">
+                        <button id="btn-login-tab" onclick="switchTab('login')" class="py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all bg-black text-white shadow-sm">
+                            Sign In
+                        </button>
+                        <button id="btn-signup-tab" onclick="switchTab('signup')" class="py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all text-neutral-600 hover:text-black">
+                            Sign Up
+                        </button>
+                    </div>
+
+                    <!-- LOGIN SECTION -->
+                    <div id="login-section" class="tab-content tab-active space-y-3">
+                        <div class="mb-1">
+                            <h1 class="text-lg font-medium tracking-tight text-black">Welcome back</h1>
+                            <p class="text-[10px] text-neutral-500">Please sign in to continue.</p>
+                        </div>
+
+                        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-2.5" novalidate>
+                            <div class="space-y-1">
+                                <label class="block text-[9px] uppercase tracking-wider text-neutral-500 font-medium">Gmail Address</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                                        <i class="fa-regular fa-envelope text-[11px]"></i>
+                                    </span>
+                                    <input type="email" id="login-email" placeholder="name@gmail.com" 
+                                        class="w-full bg-neutral-50 border border-neutral-200 focus:border-black rounded-xl py-2 pl-9 pr-3 text-[11px] text-black placeholder-neutral-400 focus:outline-none transition-all">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <label class="block text-[9px] uppercase tracking-wider text-neutral-500 font-medium">Password</label>
+                                    <a href="#" onclick="forgotPass(event)" class="text-[9px] text-neutral-500 hover:text-black transition-colors">Forgot?</a>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                                        <i class="fa-regular fa-lock text-[11px]"></i>
+                                    </span>
+                                    <input type="password" id="login-password" placeholder="••••••••" 
+                                        class="w-full bg-neutral-50 border border-neutral-200 focus:border-black rounded-xl py-2 pl-9 pr-9 text-[11px] text-black placeholder-neutral-400 focus:outline-none transition-all">
+                                    <button type="button" onclick="togglePass('login-password', 'l-eye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-black">
+                                        <i id="l-eye" class="fa-regular fa-eye text-[11px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full mt-1 bg-black text-white hover:bg-neutral-800 font-medium py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all shadow-md flex items-center justify-center space-x-2">
+                                <span>Sign In</span>
+                                <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                            </button>
+                        </form>
+
+                        <div class="pt-1 text-center">
+                            <p class="text-[10px] text-neutral-500">Don't have an account? <button onclick="switchTab('signup')" class="text-black font-medium underline underline-offset-2 hover:text-neutral-700">Sign Up</button></p>
+                        </div>
+                    </div>
+
+                    <!-- SIGNUP SECTION -->
+                    <div id="signup-section" class="tab-content tab-hidden space-y-3">
+                        <div class="mb-1">
+                            <h1 class="text-lg font-medium tracking-tight text-black">Create account</h1>
+                            <p class="text-[10px] text-neutral-500">Enter details to join ZAYLO.</p>
+                        </div>
+
+                        <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-2.5" novalidate>
+                            <div class="space-y-1">
+                                <label class="block text-[9px] uppercase tracking-wider text-neutral-500 font-medium">Full Name</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                                        <i class="fa-regular fa-user text-[11px]"></i>
+                                    </span>
+                                    <input type="text" id="signup-name" placeholder="Alex Vance" 
+                                        class="w-full bg-neutral-50 border border-neutral-200 focus:border-black rounded-xl py-2 pl-9 pr-3 text-[11px] text-black placeholder-neutral-400 focus:outline-none transition-all">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-[9px] uppercase tracking-wider text-neutral-500 font-medium">Gmail Address</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                                        <i class="fa-regular fa-envelope text-[11px]"></i>
+                                    </span>
+                                    <input type="email" id="signup-email" placeholder="name@gmail.com" 
+                                        class="w-full bg-neutral-50 border border-neutral-200 focus:border-black rounded-xl py-2 pl-9 pr-3 text-[11px] text-black placeholder-neutral-400 focus:outline-none transition-all">
+                                </div>
+                                <p id="email-error" class="text-[9px] text-rose-500 hidden mt-0.5">Please enter a valid @gmail.com address.</p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-[9px] uppercase tracking-wider text-neutral-500 font-medium">Password (Min 6 chars)</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                                        <i class="fa-regular fa-lock text-[11px]"></i>
+                                    </span>
+                                    <input type="password" id="signup-password" placeholder="••••••••" oninput="checkStrength(this.value)"
+                                        class="w-full bg-neutral-50 border border-neutral-200 focus:border-black rounded-xl py-2 pl-9 pr-9 text-[11px] text-black placeholder-neutral-400 focus:outline-none transition-all">
+                                    <button type="button" onclick="togglePass('signup-password', 's-eye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-black">
+                                        <i id="s-eye" class="fa-regular fa-eye text-[11px]"></i>
+                                    </button>
+                                </div>
+                                <p id="password-error" class="text-[9px] text-rose-500 hidden mt-0.5">Password must be at least 6 characters.</p>
+                                <div class="pt-1 flex space-x-1">
+                                    <div id="str-1" class="h-0.5 flex-1 bg-neutral-200 rounded-full transition-colors"></div>
+                                    <div id="str-2" class="h-0.5 flex-1 bg-neutral-200 rounded-full transition-colors"></div>
+                                    <div id="str-3" class="h-0.5 flex-1 bg-neutral-200 rounded-full transition-colors"></div>
+                                    <div id="str-4" class="h-0.5 flex-1 bg-neutral-200 rounded-full transition-colors"></div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full mt-1 bg-black text-white hover:bg-neutral-800 font-medium py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all shadow-md flex items-center justify-center space-x-2">
+                                <span>Create Account</span>
+                                <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                            </button>
+                        </form>
+
+                        <div class="pt-1 text-center">
+                            <p class="text-[10px] text-neutral-500">Already have an account? <button onclick="switchTab('login')" class="text-black font-medium underline underline-offset-2 hover:text-neutral-700">Sign In</button></p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex py-3 items-center">
+                        <div class="flex-grow border-t border-neutral-200"></div>
+                        <span class="flex-shrink mx-3 text-neutral-400 text-[8px] uppercase tracking-widest">Or</span>
+                        <div class="flex-grow border-t border-neutral-200"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="socialAuth('Apple')" class="flex items-center justify-center space-x-1.5 py-1.5 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-xl text-[10px] text-neutral-700 transition-all">
+                            <i class="fa-brands fa-apple text-xs"></i>
+                            <span>Apple</span>
+                        </button>
+                        <button onclick="socialAuth('Google')" class="flex items-center justify-center space-x-1.5 py-1.5 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-xl text-[10px] text-neutral-700 transition-all">
+                            <i class="fa-brands fa-google text-xs"></i>
+                            <span>Google</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <p class="text-[9px] text-neutral-400">&copy; 2026 ZAYLO. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESSFUL MODAL POPUP -->
+    <div id="success-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white border border-neutral-200 rounded-2xl p-6 w-[300px] shadow-2xl text-center transform scale-95 transition-transform duration-300" id="success-modal-card">
+            <div class="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3 text-black text-base">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="text-sm font-medium text-black mb-1">Account Created!</h2>
+            <p class="text-[11px] text-neutral-500 mb-5">Your account details saved successfully. Redirecting...</p>
+            <button onclick="redirectToIndex()" class="w-full bg-black text-white py-2 rounded-xl text-[11px] font-medium uppercase tracking-wider hover:bg-neutral-800 transition-all">
+                Continue Now
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'login';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const sSec = document.getElementById('signup-section');
+            const lSec = document.getElementById('login-section');
+            const btnS = document.getElementById('btn-signup-tab');
+            const btnL = document.getElementById('btn-login-tab');
+            const badge = document.getElementById('account-status-badge');
+
+            hideToast();
+            clearErrors();
+
+            if (tab === 'signup') {
+                sSec.className = "tab-content tab-active space-y-3";
+                lSec.className = "tab-content tab-hidden space-y-3";
+                btnS.className = "py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all bg-black text-white shadow-sm";
+                btnL.className = "py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all text-neutral-600 hover:text-black";
+                badge.innerText = "Sign Up";
+            } else {
+                lSec.className = "tab-content tab-active space-y-3";
+                sSec.className = "tab-content tab-hidden space-y-3";
+                btnL.className = "py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all bg-black text-white shadow-sm";
+                btnS.className = "py-1.5 text-[10px] font-medium uppercase tracking-wider rounded-lg transition-all text-neutral-600 hover:text-black";
+                badge.innerText = "Sign In";
+            }
+        }
+
+        function clearErrors() {
+            document.getElementById('email-error').classList.add('hidden');
+            document.getElementById('password-error').classList.add('hidden');
+        }
+
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash text-[11px]';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye text-[11px]';
+            }
+        }
+
+        function checkStrength(pwd) {
+            const bars = [document.getElementById('str-1'), document.getElementById('str-2'), document.getElementById('str-3'), document.getElementById('str-4')];
+            bars.forEach(b => b.className = "h-0.5 flex-1 bg-neutral-200 rounded-full transition-colors");
+            
+            const passErr = document.getElementById('password-error');
+            if (pwd.length > 0 && pwd.length < 6) {
+                passErr.classList.remove('hidden');
+            } else {
+                passErr.classList.add('hidden');
+            }
+
+            if (!pwd) return;
+
+            let score = 0;
+            if (pwd.length >= 6) score++;
+            if (/[A-Z]/.test(pwd)) score++;
+            if (/[0-9]/.test(pwd)) score++;
+            if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+            const colors = ['bg-neutral-400', 'bg-neutral-600', 'bg-neutral-800', 'bg-black'];
+            for (let i = 0; i < score; i++) {
+                bars[i].className = `h-0.5 flex-1 ${colors[score - 1]} rounded-full transition-colors`;
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            t.classList.remove('hidden');
+        }
+
+        function hideToast() {
+            document.getElementById('toast').classList.add('hidden');
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const pwd = document.getElementById('signup-password').value;
+
+            clearErrors();
+
+            // Strict Validation checks before redirecting
+            if (!name || !email || !pwd) {
+                showToast("Please fill all fields before continuing.");
+                return;
+            }
+
+            const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!gmailRegex.test(email)) {
+                document.getElementById('email-error').classList.remove('hidden');
+                showToast("Please use a valid @gmail.com address.");
+                return;
+            }
+
+            if (pwd.length < 6) {
+                document.getElementById('password-error').classList.remove('hidden');
+                showToast("Password must be at least 6 characters.");
+                return;
+            }
+
+            // Save user data to LocalStorage
+            const userData = { name: name, email: email, password: pwd };
+            localStorage.setItem('zaylo_user', JSON.stringify(userData));
+            localStorage.setItem('zaylo_logged_in', 'true');
+
+            // Show Success Modal
+            const modal = document.getElementById('success-modal');
+            const card = document.getElementById('success-modal-card');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+
+            setTimeout(() => {
+                redirectToIndex();
+            }, 2500);
+        }
+
+        function redirectToIndex() {
+            window.location.href = "index.html";
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const pwd = document.getElementById('login-password').value;
+
+            if (!email || !pwd) {
+                showToast("Please enter both email and password.");
+                return;
+            }
+
+            const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!gmailRegex.test(email)) {
+                showToast("Please enter a valid @gmail.com address.");
+                return;
+            }
+
+            // Save login state to LocalStorage
+            localStorage.setItem('zaylo_logged_in', 'true');
+            showToast("Successfully signed in! Redirecting...");
+            
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1200);
+        }
+
+        function socialAuth(provider) {
+            showToast(`Connecting to ${provider}...`);
+            localStorage.setItem('zaylo_logged_in', 'true');
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1500);
+        }
+
+        function forgotPass(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            if (!email) {
+                showToast("Please enter your Gmail address first.");
+                return;
+            }
+            showToast(`Password reset instructions sent to ${email}.`);
+        }
+    </script>
+</body>
+</html>
