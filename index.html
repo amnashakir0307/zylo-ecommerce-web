@@ -845,10 +845,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 
     <script>
-        if (!sessionStorage.getItem('visited_loading')) {
-        sessionStorage.setItem('visited_loading', 'true');
-        window.location.href = 'loading.html';
+      if (!sessionStorage.getItem('visited_loading')) {
+            sessionStorage.setItem('visited_loading', 'true');
+            window.location.href = 'loading.html';
+        }
 
+        // Remove Preloader once page loads completely
+       
         // Remove Preloader once page loads completely
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
@@ -1498,7 +1501,7 @@
             e.preventDefault();
             showToast('Subscribed to Drop Updates');
             e.target.reset();
-        }}
+        }
     </script>
 </body>
 </html>

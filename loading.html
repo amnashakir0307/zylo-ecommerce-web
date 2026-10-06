@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZYLO | Loading...</title>
+    <title>ZAYLO | Loading Experience</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,42 +11,84 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #000000; color: #FFFFFF; }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.96); }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #050505; 
+            color: #FFFFFF; 
         }
-        .animate-pulse-slow { animation: pulse-slow 2s infinite ease-in-out; }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in { animation: fadeInScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-black flex items-center justify-center min-h-screen select-none overflow-hidden">
+<body class="bg-[#050505] flex items-center justify-center min-h-screen select-none overflow-hidden relative">
 
-    <div class="text-center space-y-6 px-4">
-        <!-- Logo / Brand Name -->
-        <div class="animate-pulse-slow">
-            <h1 class="text-5xl sm:text-7xl font-black tracking-tighter uppercase">ZYLO</h1>
-            <p class="text-[10px] sm:text-xs font-mono uppercase tracking-[0.4em] text-gray-400 mt-2">Monochrome Luxury & Streetwear</p>
+    <!-- Ambient Glow Background -->
+    <div class="absolute w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="text-center space-y-8 px-4 relative z-10 max-w-sm w-full animate-fade-in">
+        
+        <!-- Brand Typography -->
+        <div class="space-y-3">
+            <h1 class="text-6xl sm:text-7xl font-black tracking-[-0.05em] uppercase bg-gradient-to-b from-white via-neutral-200 to-neutral-500 bg-clip-text text-transparent">
+                ZYLO
+            </h1>
+            <div class="flex items-center justify-center gap-2">
+                <span class="w-6 h-[1px] bg-neutral-700"></span>
+                <p class="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.35em] text-neutral-400">Monochrome Luxury & Streetwear</p>
+                <span class="w-6 h-[1px] bg-neutral-700"></span>
+            </div>
         </div>
 
-        <!-- Progress / Loading Bar -->
-        <div class="w-48 sm:w-64 h-1 bg-gray-800 mx-auto rounded-full overflow-hidden relative">
-            <div id="progress-bar" class="absolute top-0 left-0 h-full bg-white w-0 transition-all duration-[3000ms] ease-linear"></div>
+        <!-- Modern Progress Bar & Counter -->
+        <div class="space-y-3 pt-2">
+            <div class="w-48 sm:w-56 h-[2px] bg-neutral-900 mx-auto rounded-full overflow-hidden relative">
+                <div id="progress-bar" class="absolute top-0 left-0 h-full bg-white w-0 transition-all duration-[3000ms] ease-out shadow-[0_0_12px_rgba(255,255,255,0.8)]"></div>
+            </div>
+            
+            <div class="flex justify-between items-center text-[10px] font-mono text-neutral-500 tracking-[0.2em] px-4">
+                <span id="loading-status" class="uppercase">Syncing</span>
+                <span id="progress-count" class="text-neutral-300">0%</span>
+            </div>
         </div>
-
-        <!-- Status Text -->
-        <p class="text-[11px] font-mono tracking-widest text-gray-500 uppercase animate-pulse">Initializing Store Experience...</p>
     </div>
 
     <script>
-        // Trigger smooth progress bar fill over 3 seconds
         window.addEventListener('load', () => {
+            const progressBar = document.getElementById('progress-bar');
+            const progressCount = document.getElementById('progress-count');
+            const loadingStatus = document.getElementById('loading-status');
+            
+            // Trigger bar animation
             setTimeout(() => {
-                document.getElementById('progress-bar').style.width = '100%';
-            }, 50);
+                progressBar.style.width = '100%';
+            }, 100);
 
-            // Redirect to index.html (or signup page if you prefer) after exactly 3 seconds
+            // Dynamic status texts changes during load
+            const statuses = ["Syncing", "Curating", "Finalizing"];
+            let statusIdx = 0;
+            const statusInterval = setInterval(() => {
+                statusIdx = (statusIdx + 1) % statuses.length;
+                loadingStatus.textContent = statuses[statusIdx];
+            }, 1000);
+
+            // Smooth percentage counter (0 to 100 in 3 seconds)
+            let current = 0;
+            const countInterval = setInterval(() => {
+                current += 2;
+                if (current > 100) {
+                    current = 100;
+                    clearInterval(countInterval);
+                    clearInterval(statusInterval);
+                }
+                progressCount.textContent = current + '%';
+            }, 55);
+
+            // Redirect after 3 seconds
             setTimeout(() => {
-                window.location.href = 'sigup.html'; // Agar signup page par bhejna ho toh yahan 'signup.html' likh sakti hain
+                window.location.href = 'sigup.html'; // Change to 'index.html' if needed
             }, 3000);
         });
     </script>
